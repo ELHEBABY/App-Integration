@@ -1,3 +1,5 @@
+import imp
+from urllib import response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.template import loader
@@ -6,10 +8,13 @@ from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
 from numpy import insert
-from .forms import LoginForm, SignUpForm, User_register, Profile_edit
+from .forms import LoginForm, SignUpForm, User_register, UserUpdateForm, IntegrationSettingsForm
 from django import template
 from django.urls import reverse
+from .models import IntegrationSettings
 
+def test(request):
+    return render(request,"home/Oprofile.html")
 
 def login(request):
     if request.user.is_authenticated:
@@ -89,25 +94,27 @@ def history(request):
 
 
 @login_required(login_url="/login/")
+
 def profile(request):
     segment='profile'
     msg = None
     success = False
+    
     if request.method == "POST":
-        form = Profile_edit(request.POST)
+        form = UserUpdateForm(request.POST, instance=request.user)
+        # profile_form = UpdateProfileForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             form.save()
             success = True
 
-            return redirect("/users_management")
+            return redirect("/profile")
 
         else:
             msg = 'Form is not valid'
     else:
-        form = Profile_edit()
+        form = UserUpdateForm(instance=request.user)
     # print(segment)
     return render(request, "home/profile.html", {"form": form, "msg": msg, "success": success,"segment": segment})
-
 
 
 
@@ -117,24 +124,34 @@ def settings(request):
     success = None
     segment='settings'
     users=User.objects.all()
-
+    settings=IntegrationSettings.objects.get(id=1)
 
     if request.method == "POST":
-        form = User_register(request.POST)
-        if form.is_valid():
-            form.save()
-            # username = form.cleaned_data.get("username")
-            # raw_password = form.cleaned_data.get("password")
-            # user = authenticate(username=username, password=raw_password)
-            # msg = 'User created - please <a href="/login">login</a>.'
-            success = 'success'
-            # request = None
-            return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users})
-        else:
-            msg = 'Form is not valid'
+        if request.POST.get('username'):
+            form = UserUpdateForm(request.POST)
+            if form.is_valid():
+                form.save()
+                # username = form.cleaned_data.get("username")
+                # raw_password = form.cleaned_data.get("password")
+                # user = authenticate(username=username, password=raw_password)
+                # msg = 'User created - please <a href="/login">login</a>.'
+                success = 'success'
+                # request = None
+                return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings})
+            else:
+                msg = 'Form is not valid'
+        elif request.POST.get('integration_frequency'):
+            form = UserUpdateForm(request.POST)
+            form_settings = IntegrationSettingsForm(request.POST, instance=settings)
+            if form_settings.is_valid():
+                form_settings.save()
+                return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings})
+
     else:
-        form = User_register()
-    return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users})
+        form = UserUpdateForm()
+        form_settings = IntegrationSettingsForm(instance=settings)
+
+        return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users, 'form_settings' : form_settings})
 
 
 
@@ -146,11 +163,11 @@ def settings_user_update(request,id):
     success = None
     segment='settings'
     user=User.objects.get(id=id)
-    form = User_register(instance=user)
+    form = UserUpdateForm(instance=user)
     users=User.objects.all()
 
     if request.method == "POST":
-        form = User_register(request.POST,instance=user)
+        form = UserUpdateForm(request.POST,instance=user)
         if form.is_valid():
             form.save()
             success = 'success'
@@ -158,7 +175,7 @@ def settings_user_update(request,id):
         else:
             msg = 'Form is not valid'
     else:
-        form = User_register(instance=user)
+        form = UserUpdateForm(instance=user)
     return render(request, "home/admin/settings_user_update.html", {"form": form, "msg": msg, "success": success,"segment": segment , "user" : user, "users" : users})
 
 

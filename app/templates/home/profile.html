@@ -64,17 +64,30 @@
                 </div>
                 <span class="text-error">{{ form.username.errors }}</span>
 
+                <label>First name</label>
+                <div class="mb-3">
+                  {{ form.first_name }}
+                </div>
+                <span class="text-error">{{ form.first_name.errors }}</span>
+
+                <label>Last name</label>
+                <div class="mb-3">
+                  {{ form.last_name }}
+                </div>
+                <span class="text-error">{{ form.last_name.errors }}</span>
+
                 <label>Email</label>
                 <div class="mb-3">
                   {{ form.email }}
                 </div>
                 <span class="text-error">{{ form.email.errors }}</span>
                 
-                <label>Password</label>
+                
+                {% comment %} <label>Password</label>
                 <div class="mb-3">
                   {{ form.password }}
                 </div>
-                <span class="text-error">{{ form.password.errors }}</span>
+                <span class="text-error">{{ form.password.errors }}</span> {% endcomment %}
 
                 {% comment %} <label>Password Check</label>
                 <div class="mb-3">
@@ -87,7 +100,7 @@
                   <label class="form-check-label" for="rememberMe">Terms</label>
                 </div> {% endcomment %}
                 <div class="text-center">
-                  <button type="submit" name="register" class="btn bg-gradient-info w-100 mt-4 mb-0">Save</button>
+                  <button type="submit" name="register" class="btn bg-gradient-info w-100 mt-4 mb-0">Update</button>
                 </div>
               </form>
             </div>
@@ -95,7 +108,7 @@
               <p class="mb-4 text-sm mx-auto">
                 Already have an account?
                 <a href="" 
-                   class="text-info text-gradient font-weight-bold">Sign IN</a>
+class="text-info text-gradient font-weight-bold">Sign IN</a>
               </p>
             </div> {% endcomment %}
           </div>

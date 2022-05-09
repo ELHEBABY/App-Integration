@@ -1,4 +1,10 @@
 
+  
+
+
+
+
+  
   <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
     <div class="container-fluid px-3">
         <nav aria-label="breadcrumb">
@@ -17,6 +23,9 @@
               {% if 'profile' in segment %}
                 Profile
               {% endif %}
+              {% if 'settings' in segment %}
+                Settings
+              {% endif %}
               {% comment %} Dashboard {% endcomment %}
             </li>
           </ol>
@@ -29,6 +38,15 @@
                 Logout
               </a>
             </li>
+            <li class="nav-item d-xl-none ps-4 d-flex align-items-center">
+              <a href="javascript:;" class="nav-link p-0 text-body" id="iconNavbarSidenav">
+              <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+              </div>
+              </a>
+              </li>
             <li class="nav-item d-xl-none ps-4 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                 <div class="sidenav-toggler-inner">
@@ -43,6 +61,7 @@
                 <i class="fa fa-cog fixed-plugin-button-nav cursor-pointer"></i>
               </a> {% endcomment %}
             </li>
+            
             <li class="nav-item dropdown pe-2 d-flex align-items-center">
               <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fa fa-bell cursor-pointer"></i>

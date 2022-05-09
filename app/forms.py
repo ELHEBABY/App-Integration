@@ -1,11 +1,7 @@
-# -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import IntegrationSettings
 
 
 class LoginForm(forms.Form):
@@ -64,11 +60,25 @@ class User_register(UserCreationForm):
 
 
 
-class Profile_edit(UserCreationForm):
+class UserUpdateForm(forms.ModelForm):
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 "placeholder": "Username",
+                "class": "form-control"
+            }
+        ))
+    last_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Last name",
+                "class": "form-control"
+            }
+        ))
+    first_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "First name",
                 "class": "form-control"
             }
         ))
@@ -79,17 +89,26 @@ class Profile_edit(UserCreationForm):
                 "class": "form-control"
             }
         ))
-    password = forms.CharField(
-        widget=forms.PasswordInput(
-            attrs={
-                "placeholder": "Password",
-                "class": "form-control"
-            }
-        ))
+    # is_active = forms.BooleanField(
+        # widget=forms.ChoiceField(
+        #     attrs={
+        #         "placeholder": "Is active",
+        #         "class": "form-control"
+        #     }
 
+        # )
+        # widget=forms.RadioSelect(choices=("False", "True"))
+        # )
+    # is_active = forms.CharField(
+    #     widget=forms.RadioSelect(
+    #         attrs={
+    #             "placeholder": "Is active",
+    #             "class": "form-control"
+    #         }
+    #     ))
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('username', 'email','last_name','first_name','is_active')
 
 
 class SignUpForm(UserCreationForm):
@@ -125,3 +144,39 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')
+
+
+
+class IntegrationSettingsForm(forms.ModelForm):
+    # integration_automatic_is_active = forms.BooleanField(
+    #     widget=forms.RadioSelect(
+    #         attrs={
+    #             "placeholder": "Itegration automatic",
+    #             "class": "form-control"
+    #         }
+    #     ))
+
+    # integration_frequency = forms.CharField(
+    #     widget=forms.Select(
+    #         attrs={
+    #             "placeholder": "Integration frequency",
+    #             "class": "form-control"
+    #         }
+    #     ))
+    
+    TRUE_FALSE_CHOICES = (
+            (True, 'Yes'),
+            (False, 'No')
+        )
+
+    integration_automatic_is_active = forms.ChoiceField(choices = TRUE_FALSE_CHOICES, label="Integration automatique", initial='', widget=forms.Select(attrs={'class': 'form-control','placeholder' : 'Integration automatique'}), required=True)
+    class Meta:
+        model = IntegrationSettings
+        fields = ('integration_automatic_is_active', 'integration_frequency')
+        
+        widgets = {
+        # 'integration_automatic_is_active' : forms.RadioSelect(attrs={'class': 'form-control','placeholder' : 'Integration automatique'}),
+        'integration_frequency' : forms.Select(attrs={'class': 'form-control', 'placeholder' : 'Integration frequency'})
+        
+
+    }

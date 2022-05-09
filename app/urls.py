@@ -24,6 +24,9 @@ urlpatterns = [
     path('settings/user/update/<int:id>', views.settings_user_update,name="update"),
 
 
+    path('test/', views.test,name="test"),
+
+
     
     # path('home/', views.index),
 
