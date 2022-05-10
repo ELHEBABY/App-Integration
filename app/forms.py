@@ -27,7 +27,8 @@ class User_register(UserCreationForm):
         widget=forms.TextInput(
             attrs={
                 "placeholder": "First name",
-                "class": "form-control"
+                "class": "form-control",
+                'checked' : 'checked'
             }
         ))
     last_name = forms.CharField(
@@ -78,7 +79,7 @@ class User_register(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password','is_active')
+        fields = ( 'first_name', 'last_name', 'username', 'email', 'password','is_active')
 
 
 
@@ -205,7 +206,7 @@ class IntegrationSettingsForm(forms.ModelForm):
 
 class PasswordChangeForm(PasswordChangeForm):
 
-    old_password = forms.CharField(
+    old_password = forms.CharField(label="Old password",
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "Old password :",
@@ -213,7 +214,7 @@ class PasswordChangeForm(PasswordChangeForm):
             }
         ))
 
-    new_password1= forms.CharField(
+    new_password1= forms.CharField(label="New password",
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "New password",
@@ -221,10 +222,10 @@ class PasswordChangeForm(PasswordChangeForm):
             }
         ))
     
-    new_password2= forms.CharField(
+    new_password2= forms.CharField(label="New password confirmation",
         widget=forms.PasswordInput(
             attrs={
-                "placeholder": "New password confirmation: ",
+                "placeholder": "New password confirmation ",
                 "class": "form-control"
             }
         ))

@@ -45,7 +45,7 @@
                 {% if success %}
                   <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <span class="alert-icon text-white"><i class="ni ni-like-2"></i></span>
-                    <span class="alert-text text-white"><strong>Success!</strong> {{msg}}</span>
+                    <span class="alert-text text-white"><strong>The user was successfully added!</strong> {{msg}}</span>
                     <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close">
                         {% comment %} <span aria-hidden="true">×</span> {% endcomment %}
                     </button>
@@ -59,7 +59,7 @@
                       {{  safe }}
                       <div class="alert alert-warning alert-dismissible fade show" role="alert">
                         <span class="alert-icon text-white"><i class="ni ni-like-2"></i></span>
-                        <span class="alert-text text-white"><strong>Warning!</strong> {{msg}}!</span>
+                        <span class="alert-text text-white"><strong>Warning! Form is not valid</strong> {{msg}}!</span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                             {% comment %} <span aria-hidden="true">&times;</span> {% endcomment %}
                         </button>
@@ -68,10 +68,15 @@
                 </p>
               </div>
               <div class="card-body ">
-               
                 <form role="form " method="post" action="">    
                   {% csrf_token %}
   
+                  <label>Username</label>
+                  <div class="mb-3">
+                    {{ form.username }}
+                  </div>
+                  <span class="text-error">{{ form.username.errors }}</span>
+                  
                   <label>First name</label>
                   <div class="mb-3">
                     {{ form.first_name }}
@@ -83,12 +88,6 @@
                     {{ form.last_name }}
                   </div>
                   <span class="text-error">{{ form.last_name.errors }}</span>
-  
-                  <label>Username</label>
-                  <div class="mb-3">
-                    {{ form.username }}
-                  </div>
-                  <span class="text-error">{{ form.username.errors }}</span>
 
                   <label>Email</label>
                   <div class="mb-3">
@@ -113,11 +112,7 @@
                 </form>
               
 
-
-
-               
-{% comment %}                
-               
+              {% comment %}                
                 <form role="form " method="post" action="">    
                   {% csrf_token %}
                   <label>Username</label>
@@ -178,8 +173,6 @@
                     <li class="list-group-item border-0 ">
                       <div class="d-flex mx-auto flex-column">
                         <h6 class="accordion-header" id="headingOne">
-
-
                           <div class="d-flex flex-column mx-auto">
                             <div class="row ">
 

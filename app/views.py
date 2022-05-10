@@ -13,6 +13,7 @@ from django import template
 from django.urls import reverse
 from .models import IntegrationSettings
 from django.contrib import messages
+from .decorators import allowedUsers
 
 from django.contrib.auth import update_session_auth_hash
 # from django.contrib.auth.forms import PasswordChangeForm
@@ -50,8 +51,8 @@ def logout_view(request):
 
 @login_required(login_url="/login/")
 def index(request):
-    context = {'segment': 'index'}
-
+    is_admin = is_admin_test(request)
+    context = {'segment': 'index',"is_admin" : is_admin}
     html_template = loader.get_template('home/index.html')
     return HttpResponse(html_template.render(context, request))
 
@@ -85,20 +86,31 @@ def pages(request):
 
 @login_required(login_url="/login/")
 def integration(request):
+    is_admin = is_admin_test(request)
     segment='integration'
-    return render(request,"home/integration.html",{"segment": segment})
+    return render(request,"home/integration.html",{"segment": segment, "is_admin" : is_admin})
 
 
 
 @login_required(login_url="/login/")
 def history(request):
+    is_admin = is_admin_test(request)
     segment='history'
-    return render(request,"home/history.html",{"segment": segment})
+    return render(request,"home/history.html",{"segment": segment, "is_admin" : is_admin})
 
-
+def is_admin_test(request):
+    group = None
+    allowedGroups=["admin"]
+    if request.user.groups.exists():
+        group = request.user.groups.all()[0].name
+    if group in allowedGroups:
+        return True
+    else:
+        return False
 
 @login_required(login_url="/login/")
 def profile(request):
+    is_admin = is_admin_test(request)
     segment='profile'
     msg = None
     msg_change_password = None
@@ -112,10 +124,12 @@ def profile(request):
             if form.is_valid():
                 form.save()
                 success = True
-                return render(request, "home/profile.html", {"formPasswordChange": formPasswordChange,"form": form, "msg": msg, "success": success,"segment": segment, 'current_user' : current_user})
+                return render(request, "home/profile.html", {"formPasswordChange": formPasswordChange,"form": form, "msg": msg, "success": success,"segment": segment, 'current_user' : current_user, "is_admin":is_admin
+                })
             else:
                 msg = 'Form is not valid'
-            return render(request, "home/profile.html", {"formPasswordChange": formPasswordChange,"form": form, "msg": msg, "success": success,"segment": segment, 'current_user' : current_user})
+            return render(request, "home/profile.html", {"formPasswordChange": formPasswordChange,"form": form, "msg": msg, "success": success,"segment": segment, 'current_user' : current_user, "is_admin":is_admin
+            })
         elif request.POST.get('new_password1'):
             form = UserUpdateForm(instance=request.user)
             formPasswordChange = PasswordChangeForm(request.user, request.POST)
@@ -125,24 +139,26 @@ def profile(request):
                 messages.success(request, 'Your password was successfully updated!')
                 msg_chang= "Your password was successfully updated!"
                 success_change_password=True
-                return render(request, 'home/profile.html', {"formPasswordChange": formPasswordChange,"form": form, "msg": msg, "success": success,"segment": segment, 'current_user' : current_user, "success_change_password" : success_change_password,"msg_change_password":msg_change_password, "msg_chang" : msg_chang})
-                # return redirect('profile')
+                return render(request, 'home/profile.html', {"formPasswordChange": formPasswordChange,"form": form, "msg": msg, "success": success,"segment": segment, 'current_user' : current_user, "success_change_password" : success_change_password,"msg_change_password":msg_change_password, "msg_chang" : msg_chang, "is_admin":is_admin
+                })
             else:
                 msg_change_password = True
                 msg_chang = "Please correct the error below "
                 messages.error(request, 'Please correct the error below.')
-            return render(request, 'home/profile.html', {"formPasswordChange": formPasswordChange,"form": form, "msg": msg, "success": success,"segment": segment, 'current_user' : current_user,"msg_change_password":msg_change_password, "msg_chang" : msg_chang})
-                
+            return render(request, 'home/profile.html', {"formPasswordChange": formPasswordChange,"form": form, "msg": msg, "success": success,"segment": segment, 'current_user' : current_user,"msg_change_password":msg_change_password, "msg_chang" : msg_chang, "is_admin":is_admin
+            })
     else:
         form = UserUpdateForm(instance=request.user)
         formPasswordChange = PasswordChangeForm(request.user)
         return render(request, 'home/profile.html', {
-            'formPasswordChange': formPasswordChange, "msg": msg, "segment": segment,"success": success, "form": form, 'current_user' : current_user
+            'formPasswordChange': formPasswordChange, "msg": msg, "segment": segment,"success": success, "form": form, 'current_user' : current_user, "is_admin":is_admin
         })
 
 
 @login_required(login_url="/login/")
+@allowedUsers(allowedGroups=['admin'])
 def settings(request):
+    is_admin = is_admin_test(request)
     msg = None
     success = None
     segment='settings'
@@ -158,29 +174,30 @@ def settings(request):
                 # raw_password = form.cleaned_data.get("password")
                 # user = authenticate(username=username, password=raw_password)
                 # msg = 'User created - please <a href="/login">login</a>.'
-                success = 'success'
+                success = 'The user was successfully added'
                 # request = None
-                return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings})
+                return render(request, "home/admin/settings.html",{"form": form, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
             else:
                 msg = 'Form is not valid'
+                return render(request, "home/admin/settings.html",{"form": form, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
         elif request.POST.get('integration_frequency'):
             form = User_register(request.POST)
             form_settings = IntegrationSettingsForm(request.POST, instance=settings)
             if form_settings.is_valid():
                 form_settings.save()
-                return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings})
+                return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
     else:
         form = User_register()
         form_settings = IntegrationSettingsForm(instance=settings)
         
-        return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users, 'form_settings' : form_settings})
-
+        return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin})
 
 
 
 
 @login_required(login_url="/login/")
 def settings_user_update(request,id):
+    is_admin = is_admin_test(request)
     msg = None
     success = None
     segment='settings'
@@ -200,18 +217,18 @@ def settings_user_update(request,id):
                 # msg = 'User created - please <a href="/login">login</a>.'
                 success = 'success'
                 # request = None
-                return render(request, "home/admin/settings_user_update.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings})
+                return render(request, "home/admin/settings_user_update.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
             else:
                 msg = 'Form is not valid'
         elif request.POST.get('integration_frequency'):
             form = UserUpdateForm(request.POST)
             if form_settings.is_valid():
                 form_settings.save()
-                return render(request, "home/admin/settings_user_update.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings})
+                return render(request, "home/admin/settings_user_update.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
     else:
         form = UserUpdateForm(instance=user)
         form_settings = IntegrationSettingsForm(instance=settings)
-        return render(request, "home/admin/settings_user_update.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users, 'form_settings' : form_settings})
+        return render(request, "home/admin/settings_user_update.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin})
 
 
 
@@ -235,3 +252,13 @@ def register(request):
     else:
         form = SignUpForm()
     return render(request, "accounts/register.html", {"form": form, "msg": msg, "success": success})
+
+
+def handel404(request, exception):
+    return render(request,'home/page-404.html',status=404)
+
+def handel403(request, exception):
+    return render(request,'home/page-403.html',status=404)
+
+def handel500(request):
+    return render(request,'home/page-500.html',status=404)

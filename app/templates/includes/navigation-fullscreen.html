@@ -21,17 +21,17 @@
             <div class="  " id="navigation">
               <ul class="navbar-nav mx-auto navbar-right ">
                 <li class="nav-item">
-                  <a class="nav-link me-2" href="">
+                  <a class="nav-link me-2" href={% url 'login' %}>
                     <i class="fas fa-key text-dark me-2"></i>
                     Sign In
                   </a>
                 </li>
-                <li class="nav-item">
+                {% comment %} <li class="nav-item">
                   <a class="nav-link me-2" href="">
                     <i class="fas fa-user-circle text-dark me-2"></i>
                     Sign Up
                   </a>
-                </li>
+                </li> {% endcomment %}
               </ul>
               {% comment %} <ul class="navbar-nav d-lg-block d-none">
                 <li class="nav-item">
