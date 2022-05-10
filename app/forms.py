@@ -1,7 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from .models import IntegrationSettings
+
 
 
 class LoginForm(forms.Form):
@@ -22,6 +23,20 @@ class LoginForm(forms.Form):
 
 
 class User_register(UserCreationForm):
+    first_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "First name",
+                "class": "form-control"
+            }
+        ))
+    last_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Last name",
+                "class": "form-control"
+            }
+        ))
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -43,6 +58,13 @@ class User_register(UserCreationForm):
                 "class": "form-control"
             }
         ))
+    # is_active= forms.ChoiceField(
+    #     widget=forms.RadioSelect(
+    #         attrs={
+    #             "placeholder": "Is Active",
+    #             "class": "form-control"
+    #         }
+    #     ))
     # password2 = forms.CharField(
     #     widget=forms.PasswordInput(
     #         attrs={
@@ -56,7 +78,7 @@ class User_register(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password','is_active')
 
 
 
@@ -177,6 +199,66 @@ class IntegrationSettingsForm(forms.ModelForm):
         widgets = {
         # 'integration_automatic_is_active' : forms.RadioSelect(attrs={'class': 'form-control','placeholder' : 'Integration automatique'}),
         'integration_frequency' : forms.Select(attrs={'class': 'form-control', 'placeholder' : 'Integration frequency'})
-        
-
     }
+
+
+
+class PasswordChangeForm(PasswordChangeForm):
+
+    old_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Old password :",
+                "class": "form-control"
+            }
+        ))
+
+    new_password1= forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "New password",
+                "class": "form-control"
+            }
+        ))
+    
+    new_password2= forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "New password confirmation: ",
+                "class": "form-control"
+            }
+        ))
+
+    class Meta:
+        model = IntegrationSettings
+        fields = ('old_password','new_password1', 'new_password2')
+     
+
+
+
+
+
+
+
+class ChangePasswordForm(forms.ModelForm):
+    
+    password= forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Password",
+                "class": "form-control"
+            }
+        ))
+
+    # password2 = forms.CharField(
+    #     widget=forms.PasswordInput(
+    #         attrs={
+    #             "placeholder": "Password check",
+    #             "class": "form-control"
+    #         }
+    #     ))
+
+
+    class Meta:
+        model = User
+        fields = ('password',)
