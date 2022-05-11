@@ -167,21 +167,20 @@
             {% comment %} <div class="row"> {% endcomment %}
               <div class=" mx-auto">
                 <div class="accordion" id="accordionRental">
-                  <ul class="list-group border-0">
+                  <ul class="list-group border-0 py-3">
                   {% comment %} <div class="accordion-item mb-3"> {% endcomment %}
                     {% for user in users %}
-                    <li class="list-group-item border-0 ">
-                      <div class="d-flex mx-auto flex-column">
+                    <li class="list-group-item border-0 height-20 " >
+                      {% comment %} <li class="list-group-item border-0 height-20 " style=" height: 107px;"> {% endcomment %}
+                      <div class="d-flex mx-auto flex-column" style=" height: 60px;">
                         <h6 class="accordion-header" id="headingOne">
                           <div class="d-flex flex-column mx-auto">
                             <div class="row ">
-
                             <div class="col-xl-2 col-md-2 col-3">
                               <div class="avatar me-3">
                                 <img src="/static/assets/img/kal-visuals-square.jpg" alt="kal" class="border-radius-lg shadow">
                               </div>
                             </div>
-
                             <div class="col-md-5 col-xl-5 col-4">
                               <div class="    ">
                                 <h6 class=" text-sm">{{user.first_name}} {{user.last_name}}</h6>
@@ -193,13 +192,11 @@
                                 {% endif %}
                               </div>
                             </div>
-                            
                             <div class="col-md-2 col-2 col-xl-2">
                               <button class="accordion-button btn btn-link ">
                                 <a class="btn btn-link   " href="/settings/user/update/{{user.id}}">Edit</a>
                               </button>
                             </div>
-
                             <div class="col-md-2 col-2 col-xl-2">
                               <button class="accordion-button btn btn-link " type="button" data-bs-toggle="collapse" data-bs-target="#m{{user.id}}" aria-expanded="false" aria-controls="collapseOne">
                                 <a class="btn btn-link  " href="">Info</a>
@@ -210,7 +207,7 @@
                         </h6>
                       </div>
                       <div id="m{{user.id}}" class="accordion-collapse collapse border-0 " aria-labelledby="headingOne" data-bs-parent="#accordionRental" style="">
-                        <div class="accordion-body text-sm opacity-8">
+                        <div class="accordion-body text-sm opacity-8 mt-n1">
                           <table>
                             <tr>
                               <th> Username :</th>
@@ -227,6 +224,31 @@
                     </li>
                     {% endfor %}
                   </ul>
+                  <div class="justify-content-end">
+                    <nav aria-label="Page navigation example" >
+                      {% if users.has_other_pages %}
+                        <ul class="pagination justify-content-center pagination-sm" >
+                          {% if users.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ users.previous_page_number }}">Previous</a></li>
+                          {% else %}
+                            <li  class="disabled page-item"><span class="page-link">Previous</span></li>
+                          {% endif %}
+                          {% for i in users.paginator.page_range %}
+                            {% if users.number == i %}
+                              <li class="active page-item"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span></li>
+                            {% else %}
+                              <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                            {% endif %}
+                          {% endfor %}
+                          {% if users.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ users.next_page_number }}">Next</a></li>
+                          {% else %}
+                            <li class="disabled page-item"><span class="page-link">Next</span></li>
+                          {% endif %}
+                        </ul>
+                      {% endif %}
+                    </nav>
+                  </div>
                 </div>
               </div>
             </div>
@@ -234,7 +256,8 @@
         </div>
       </div>
     </div>
-{% comment %} <div class="col-12 col-xl-4">
+
+    {% comment %} <div class="col-12 col-xl-4">
   <div class="card mb-4">
     <div class="card-header pb-0 p-3">
       <h6 class="mb-0">Integration Settings</h6>

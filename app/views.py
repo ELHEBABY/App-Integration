@@ -1,4 +1,3 @@
-import imp
 from urllib import response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -8,15 +7,15 @@ from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
 from numpy import insert
-from .forms import LoginForm, SignUpForm, User_register, UserUpdateForm, IntegrationSettingsForm, ChangePasswordForm, PasswordChangeForm
+from .forms import LoginForm, SignUpForm, User_register, UserUpdateForm, IntegrationSettingsForm, PasswordChangeForm
 from django import template
 from django.urls import reverse
 from .models import IntegrationSettings
 from django.contrib import messages
 from .decorators import allowedUsers
-
+from django.core.paginator import Paginator
 from django.contrib.auth import update_session_auth_hash
-# from django.contrib.auth.forms import PasswordChangeForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def test(request):
     return render(request,"home/billing.html")
@@ -98,15 +97,6 @@ def history(request):
     segment='history'
     return render(request,"home/history.html",{"segment": segment, "is_admin" : is_admin})
 
-def is_admin_test(request):
-    group = None
-    allowedGroups=["admin"]
-    if request.user.groups.exists():
-        group = request.user.groups.all()[0].name
-    if group in allowedGroups:
-        return True
-    else:
-        return False
 
 @login_required(login_url="/login/")
 def profile(request):
@@ -155,14 +145,16 @@ def profile(request):
         })
 
 
+
 @login_required(login_url="/login/")
 @allowedUsers(allowedGroups=['admin'])
 def settings(request):
+    users = pages(request,7)
+
     is_admin = is_admin_test(request)
     msg = None
     success = None
     segment='settings'
-    users=User.objects.all()
     settings=IntegrationSettings.objects.get(id=1)
     form_settings = IntegrationSettingsForm(request.POST, instance=settings)
     if request.method == "POST":
@@ -197,13 +189,14 @@ def settings(request):
 
 @login_required(login_url="/login/")
 def settings_user_update(request,id):
+    users = pages(request,6)
     is_admin = is_admin_test(request)
     msg = None
     success = None
     segment='settings'
     user=User.objects.get(id=id)
     form = UserUpdateForm(instance=user)
-    users=User.objects.all()
+    # users=User.objects.all()
     settings=IntegrationSettings.objects.get(id=1)
     form_settings = IntegrationSettingsForm(request.POST, instance=settings)
     if request.method == "POST":
@@ -262,3 +255,34 @@ def handel403(request, exception):
 
 def handel500(request):
     return render(request,'home/page-500.html',status=404)
+
+
+
+
+
+
+
+def is_admin_test(request):
+    group = None
+    allowedGroups=["admin"]
+    if request.user.groups.exists():
+        group = request.user.groups.all()[0].name
+    if group in allowedGroups:
+        return True
+    else:
+        return False
+
+
+def pages(request,a):
+    user = User.objects.all()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(user, a)
+    try:
+        users = paginator.page(page)
+        return users
+    except PageNotAnInteger:
+        users = paginator.page(1)
+        return users
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+        return users
