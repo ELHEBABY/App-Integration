@@ -178,6 +178,10 @@
                             <div class="row ">
                             <div class="col-xl-2 col-md-2 col-3">
                               <div class="avatar me-3">
+                                {% comment %} {% with "bruce-mars.jpg,ivana-square.jpg,kal-visuals-square.jpg,marie.jpg,team-1.jpg,team-2.jpg,team-3.jpg,team-4.jpg"|split:","|random as image%} {% endcomment %}
+                                
+                                {% comment %} {% with "image1.jpg,image2.jpg"|my_random as image%} {% endcomment %}
+                                {% comment %} <img src="/static/assets/img/team-'+ Math.round((Math.random()*3)+1)+ '.jpg" alt="kal" class="border-radius-lg shadow"> {% endcomment %}
                                 <img src="/static/assets/img/kal-visuals-square.jpg" alt="kal" class="border-radius-lg shadow">
                               </div>
                             </div>

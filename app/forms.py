@@ -1,8 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.models import User
-from .models import IntegrationSettings
 
+from .models import IntegrationSettings
 
 
 class LoginForm(forms.Form):
@@ -171,22 +171,6 @@ class SignUpForm(UserCreationForm):
 
 
 class IntegrationSettingsForm(forms.ModelForm):
-    # integration_automatic_is_active = forms.BooleanField(
-    #     widget=forms.RadioSelect(
-    #         attrs={
-    #             "placeholder": "Itegration automatic",
-    #             "class": "form-control"
-    #         }
-    #     ))
-
-    # integration_frequency = forms.CharField(
-    #     widget=forms.Select(
-    #         attrs={
-    #             "placeholder": "Integration frequency",
-    #             "class": "form-control"
-    #         }
-    #     ))
-    
     TRUE_FALSE_CHOICES = (
             (True, 'Yes'),
             (False, 'No')
@@ -200,7 +184,10 @@ class IntegrationSettingsForm(forms.ModelForm):
         widgets = {
         # 'integration_automatic_is_active' : forms.RadioSelect(attrs={'class': 'form-control','placeholder' : 'Integration automatique'}),
         'integration_frequency' : forms.Select(attrs={'class': 'form-control', 'placeholder' : 'Integration frequency'})
-    }
+        }
+        
+
+
 
 
 
@@ -233,7 +220,7 @@ class PasswordChangeForm(PasswordChangeForm):
     class Meta:
         model = IntegrationSettings
         fields = ('old_password','new_password1', 'new_password2')
-     
+
 
 
 
@@ -250,8 +237,8 @@ class ChangePasswordForm(forms.ModelForm):
                 "class": "form-control"
             }
         ))
-
-    # password2 = forms.CharField(
+        
+# password2 = forms.CharField(
     #     widget=forms.PasswordInput(
     #         attrs={
     #             "placeholder": "Password check",
