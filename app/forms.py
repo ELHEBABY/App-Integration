@@ -171,22 +171,40 @@ class SignUpForm(UserCreationForm):
 
 
 class IntegrationSettingsForm(forms.ModelForm):
-    TRUE_FALSE_CHOICES = (
-            (True, 'Yes'),
-            (False, 'No')
-        )
 
-    integration_automatic_is_active = forms.ChoiceField(choices = TRUE_FALSE_CHOICES, label="Integration automatique", initial='', widget=forms.Select(attrs={'class': 'form-control','placeholder' : 'Integration automatique'}), required=True)
+    chois =(
+        ('automatic','automatic'),
+        ('manual','manual'))
+    type = forms.ChoiceField(
+        label="Type",
+        initial='',
+        choices=chois,
+        widget=forms.Select(
+            attrs={'class': 'form-control',
+            'placeholder' : 'Type'}),
+        required=True)
+
+    frequency =(
+        ('day','Day'),
+        ('two_days','Two days'),
+        ('week','Week'))
+    frequenc = forms.ChoiceField(
+        label="Frequenc",
+        initial='',
+        choices=frequency,
+        widget=forms.Select(
+            attrs={'class': 'form-control',
+            'placeholder' : 'Frequenc'}),
+        required=True)
+
+    time = forms.TimeField(
+        widget = forms.TimeInput(format='%H:%M', attrs={'class': 'form-control','type': 'time'}
+        )
+    )
+
     class Meta:
         model = IntegrationSettings
-        fields = ('integration_automatic_is_active', 'integration_frequency')
-        
-        widgets = {
-        # 'integration_automatic_is_active' : forms.RadioSelect(attrs={'class': 'form-control','placeholder' : 'Integration automatique'}),
-        'integration_frequency' : forms.Select(attrs={'class': 'form-control', 'placeholder' : 'Integration frequency'})
-        }
-        
-
+        fields = ('type', 'frequenc','time')
 
 
 

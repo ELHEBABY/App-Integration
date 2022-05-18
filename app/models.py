@@ -1,22 +1,66 @@
+from datetime import datetime
 import email
 from pyexpat import model
 from statistics import mode
+from time import time
 from django.db import models
-
+import datetime
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
 
 
 class IntegrationSettings(models.Model):
-    integration_automatic_is_active = models.BooleanField("Integration automatic",default=False)
+
+    chois =(
+        ('automatic','automatic'),
+        ('manual','manual'))
+    type = models.CharField("Type", max_length=50,  choices=chois)
     
-    frequency=(
+    frequency =(
         ('day','day'),
-        ('two_day','two_day'),
+        ('two_days','two days'),
         ('week','week'))
-    integration_frequency = models.CharField( max_length=50, choices=frequency, default='day')
+    frequenc = models.CharField("frequenc", max_length=50, choices=frequency)
+
+    update_date = models.DateTimeField("update date", auto_now_add=True)
+
+    time = models.TimeField("time", default="00:00:00", null=True)
+
+    def __init__(self, *args, **kwargs):
+        super(IntegrationSettings, self).__init__(*args, **kwargs)
+        self.update_date=self.update_date
+
+    def save (self, *args, **kwargs):
+        self.update_date = timezone.now()
+        super(IntegrationSettings, self).save (*args, ** kwargs)
+
+class Integrations(models.Model):
+    
+    title = models.CharField("Title", max_length=50)
+
+    chois_table =(
+        ('customer','customer'),
+        ('finance','finance'))
+
+    table = models.CharField("Table", max_length=50,  choices=chois_table)
+
+    chois_status =(
+        ('success','success'),
+        ('erreur','erreur'))
+
+    status = models.CharField("Status", max_length=50,  choices=chois_status)
+
+    description = models.CharField("Description", max_length=50, default='description')
+
+    date_time = models.DateTimeField("Datetime", auto_now_add=True) 
+    
+    def __str__(self):
+        return self.title
+
+
+
 
 
 

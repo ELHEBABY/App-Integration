@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from urllib import response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -10,7 +11,7 @@ from numpy import insert
 from .forms import LoginForm, SignUpForm, User_register, UserUpdateForm, IntegrationSettingsForm, PasswordChangeForm
 from django import template
 from django.urls import reverse
-from .models import IntegrationSettings
+from .models import IntegrationSettings, Integrations
 from django.contrib import messages
 from .decorators import allowedUsers
 from django.core.paginator import Paginator
@@ -83,16 +84,29 @@ def pages(request):
         return HttpResponse(html_template.render(context, request))
 
 
+
 @login_required(login_url="/login/")
 def integration(request):
     is_admin = is_admin_test(request)
     segment='integration'
-    return render(request,"home/integration.html",{"segment": segment, "is_admin" : is_admin})
+    settings=IntegrationSettings.objects.get(id=1)
+    date = dateNextIntegration(settings)
+
+    integrations=Integrations.objects.all()
+
+    return render(request,"home/integration.html",{'integrations': integrations, 'date': date, "segment": segment, 'settings' : settings, "is_admin" : is_admin})
 
 
 
 @login_required(login_url="/login/")
-def history(request):
+def history(request, id):
+    is_admin = is_admin_test(request)
+    segment='history'
+    integration=Integrations.objects.get(id = id)
+    return render(request,"home/history_id.html",{'integration' : integration, "segment": segment, "is_admin" : is_admin})
+
+@login_required(login_url="/login/")
+def historys(request):
     is_admin = is_admin_test(request)
     segment='history'
     return render(request,"home/history.html",{"segment": segment, "is_admin" : is_admin})
@@ -145,50 +159,52 @@ def profile(request):
         })
 
 
-
 @login_required(login_url="/login/")
 @allowedUsers(allowedGroups=['admin'])
 def settings(request):
     users = pages(request,7)
-
     is_admin = is_admin_test(request)
     msg = None
+    msg_settings = None
     success = None
+    success_settings = None
     segment='settings'
     settings=IntegrationSettings.objects.get(id=1)
-    form_settings = IntegrationSettingsForm(request.POST, instance=settings)
+    form_settings = IntegrationSettingsForm( instance=settings)
     if request.method == "POST":
         if request.POST.get('username'):
             form = User_register(request.POST)
             if form.is_valid():
                 form.save()
-                # username = form.cleaned_data.get("username")
-                # raw_password = form.cleaned_data.get("password")
-                # user = authenticate(username=username, password=raw_password)
-                # msg = 'User created - please <a href="/login">login</a>.'
                 success = 'The user was successfully added'
                 # request = None
                 return render(request, "home/admin/settings.html",{"form": form, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
             else:
                 msg = 'Form is not valid'
                 return render(request, "home/admin/settings.html",{"form": form, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
-        elif request.POST.get('integration_frequency'):
+        elif request.POST.get('frequenc'):
             form = User_register(request.POST)
             form_settings = IntegrationSettingsForm(request.POST, instance=settings)
             if form_settings.is_valid():
                 form_settings.save()
-                return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
+                success_settings = 'The modification has successfully been saved'
+                return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment,'success_settings' : success_settings, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
+            else:
+                msg_settings = 'Form is not valid'
+                return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment ,'msg_settings' : msg_settings, "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin})
+        else:
+            return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin})
+
     else:
         form = User_register()
         form_settings = IntegrationSettingsForm(instance=settings)
-        
         return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin})
 
 
 
 
 @login_required(login_url="/login/")
-def settings_user_update(request,id):
+def settings_user_update(request, id):
     users = pages(request,6)
     is_admin = is_admin_test(request)
     msg = None
@@ -286,3 +302,11 @@ def pages(request,a):
     except EmptyPage:
         users = paginator.page(paginator.num_pages)
         return users
+
+def dateNextIntegration(request):
+    if(request.frequenc == 'day'):
+        return datetime.today()
+    elif(request.frequenc == 'two_days'):
+        return request.update_date.date() + timedelta(2)
+    elif(request.frequenc == 'week'):
+        return request.update_date.date() + timedelta(days=7)
