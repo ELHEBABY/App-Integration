@@ -43,16 +43,14 @@ class Integrations(models.Model):
     chois_table =(
         ('customer','customer'),
         ('finance','finance'))
-
     table = models.CharField("Table", max_length=50,  choices=chois_table)
 
     chois_status =(
         ('success','success'),
         ('erreur','erreur'))
-
     status = models.CharField("Status", max_length=50,  choices=chois_status)
 
-    description = models.CharField("Description", max_length=50, default='description')
+    description = models.CharField("Description", max_length=350, default='description')
 
     date_time = models.DateTimeField("Datetime", auto_now_add=True) 
     

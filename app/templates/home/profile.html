@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} rofile {% endblock title %}
+{% block title %} Profile {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -15,20 +15,27 @@
     <div class="row gx-4">
       <div class="col-auto">
         <div class="avatar avatar-xl position-relative">
-          <img src="/static/assets/img/bruce-mars.jpg" alt="..." class="w-100 border-radius-lg shadow-sm">
-          <a href="javascript:;" class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2">
+          <img src="/static/assets/img/kal-visuals-square.png" alt="..." class="w-100 rounded-circle shadow-sm">
+          {% comment %} <a href="javascript:;" class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2">
             <i class="fa fa-pen top-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Image"></i>
-          </a>
+          </a> {% endcomment %}
         </div>
       </div>
       <div class="col-auto my-auto">
         <div class="h-100">
           <h5 class="mb-1">
-            Alec Thompson
+            {{ current_user.first_name }} {{ current_user.last_name }}
           </h5>
-          <p class="mb-0 font-weight-bold text-sm">
-            Admin 
-          </p>
+          {% if is_admin %}
+            <p class="mb-0 font-weight-bold text-sm">
+              Admin 
+            </p>
+          {% endif %}
+          {% if not is_admin %}
+            <p class="mb-0 font-weight-bold text-sm">
+              User 
+            </p>
+          {% endif %}
         </div>
       </div>
     </div>

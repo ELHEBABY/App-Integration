@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} UI Tables {% endblock title %}
+{% block title %} History {% endblock title %}
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -44,19 +44,20 @@
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-0">
-              <table class="table align-items-center mb-0">
+              <table class="table align-items-center  mb-0" style="table-layout: fixed;
+              word-wrap: break-word;" >
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Title</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 px-2" class="col-lg-3">Title</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Table</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Description</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7  ps-2" class="col-lg-2">Description</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">DatTime</th>
                     <th class="text-secondary opacity-7"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  <tr class="px-2">
                     <td>
                       <div class="d-flex px-2 py-1">
                         <div>
@@ -67,10 +68,10 @@
                       </div>
                     </td>
                     <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ integration.table }}</p>
+                      <p class="text-xs font-weight-bold mb-0" >{{ integration.table }}</p>
                     </td>
-                    <td>
-                      <p class="text-xs font-weight-bold mb-0">{{ integration.description }}</p>
+                    <td style="word-break: break-all">
+                      <p class="text-xs text-justify font-weight-bold mb-0" >{{ integration.description }}</p>
                     </td>
                     <td class="align-middle text-center text-sm">
                       {% if integration.status == 'success' %}

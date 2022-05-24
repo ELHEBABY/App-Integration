@@ -91,9 +91,7 @@ def integration(request):
     segment='integration'
     settings=IntegrationSettings.objects.get(id=1)
     date = dateNextIntegration(settings)
-
     integrations=Integrations.objects.all()
-
     return render(request,"home/integration.html",{'integrations': integrations, 'date': date, "segment": segment, 'settings' : settings, "is_admin" : is_admin})
 
 
@@ -104,6 +102,7 @@ def history(request, id):
     segment='history'
     integration=Integrations.objects.get(id = id)
     return render(request,"home/history_id.html",{'integration' : integration, "segment": segment, "is_admin" : is_admin})
+
 
 @login_required(login_url="/login/")
 def historys(request):
@@ -172,12 +171,13 @@ def settings(request):
     settings=IntegrationSettings.objects.get(id=1)
     form_settings = IntegrationSettingsForm( instance=settings)
     if request.method == "POST":
-        if request.POST.get('username'):
+        if request.POST.get('first_name'):
             form = User_register(request.POST)
+            # form.username='user'
             if form.is_valid():
                 form.save()
                 success = 'The user was successfully added'
-                # request = None
+                users = pages(request,7)
                 return render(request, "home/admin/settings.html",{"form": form, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
             else:
                 msg = 'Form is not valid'
