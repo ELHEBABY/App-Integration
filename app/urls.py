@@ -18,8 +18,12 @@ urlpatterns = [
     path('profile/', views.profile,name="profile"),
     path('settings/', views.settings,name="settings"),
     path('settings/user/update/<int:id>', views.settings_user_update,name="update"),
+    path('lol/', views.success,name="success"),
+
+
 
     path('test/', views.test,name="test"),
+    path('test2/', views.test2,name="test2"),
     
     # path('home/', views.index),
 

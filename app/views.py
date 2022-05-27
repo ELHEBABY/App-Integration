@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.models import User
-from numpy import insert
+# from numpy import insert
 from .forms import LoginForm, SignUpForm, User_register, UserUpdateForm, IntegrationSettingsForm, PasswordChangeForm
 from django import template
 from django.urls import reverse
@@ -18,8 +18,48 @@ from django.core.paginator import Paginator
 from django.contrib.auth import update_session_auth_hash
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.template.loader import render_to_string
+from .tasks import test_func, test_func2
+from django_celery_beat.models import PeriodicTask, CrontabSchedule
+
 def test(request):
-    return render(request,"home/billing.html")
+    test_func.delay("lol")
+    return HttpResponse("Done")
+
+
+def test2(request):
+    schedule, created = CrontabSchedule.objects.get_or_create(
+        minute='12',
+        hour='21',
+        day_of_week='*',
+        day_of_month='*',
+        month_of_year='*',
+    )
+    task = PeriodicTask.objects.create(crontab = schedule, name = "schedule_mail_task_"+"4", task = 'app.tasks.test_func2')
+    return HttpResponse("Done")
+
+
+
+
+
+
+
+def success(request):
+    template = render_to_string('home/email.html')
+    email=EmailMessage(
+        'subject',
+        template,
+        'pferendezvous@gmail.com',
+        ['elmehdi.elhebaby@gmail.com'],
+    )
+    email.fail_silently=False
+    email.send()
+    # project=Project.objects.get()
+    return redirect("/integration")
+
+
 
 def login(request):
     if request.user.is_authenticated:
