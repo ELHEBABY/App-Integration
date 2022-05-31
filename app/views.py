@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from urllib import response
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
@@ -17,28 +17,20 @@ from .decorators import allowedUsers
 from django.core.paginator import Paginator
 from django.contrib.auth import update_session_auth_hash
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+import random
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
-from .tasks import test_func, test_func2
-from django_celery_beat.models import PeriodicTask, CrontabSchedule
+from .tasks import test_func
+from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSchedule
+# import datetime
+
 
 def test(request):
     test_func.delay("lol")
     return HttpResponse("Done")
 
 
-def test2(request):
-    schedule, created = CrontabSchedule.objects.get_or_create(
-        minute='12',
-        hour='21',
-        day_of_week='*',
-        day_of_month='*',
-        month_of_year='*',
-    )
-    task = PeriodicTask.objects.create(crontab = schedule, name = "schedule_mail_task_"+"4", task = 'app.tasks.test_func2')
-    return HttpResponse("Done")
 
 
 
@@ -106,19 +98,14 @@ def pages(request):
     try:
 
         load_template = request.path.split('/')[-1]
-
         if load_template == 'admin':
             return HttpResponseRedirect(reverse('admin:index'))
         context['segment'] = load_template
-
         html_template = loader.get_template('home/' + load_template +'.html')
         return HttpResponse(html_template.render(context, request))
-
     except template.TemplateDoesNotExist:
-
         html_template = loader.get_template('home/page-404.html')
         return HttpResponse(html_template.render(context, request))
-
     except:
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
@@ -130,7 +117,7 @@ def integration(request):
     is_admin = is_admin_test(request)
     segment='integration'
     settings=IntegrationSettings.objects.get(id=1)
-    date = dateNextIntegration(settings)
+    date = dateNextIntegration()
     integrations=Integrations.objects.all()
     return render(request,"home/integration.html",{'integrations': integrations, 'date': date, "segment": segment, 'settings' : settings, "is_admin" : is_admin})
 
@@ -227,18 +214,162 @@ def settings(request):
             form_settings = IntegrationSettingsForm(request.POST, instance=settings)
             if form_settings.is_valid():
                 form_settings.save()
+                # methood 1
+                # if(settings.type == 'automatic'):
+                #     datetime = dateNextIntegration()
+                #     integration_schedule(datetime)
+                # if(settings.type == 'manual'):
+                #     # anuuler tout les integration schedule
+                #     pass
+                periodic_task = PeriodicTask.objects.get(name='schedule_mail_task_2')
+                if(settings.type == 'automatic'):
+                    periodic_task.enabled = True
+                    interval = IntervalSchedule.objects.get(id=periodic_task.interval_id)
+                    # crontab.minute = settings.time.minute
+                    # crontab.hour = settings.time.hour
+                    # periodic_task.crontab_id = NULL
+                    # crontab.save()
+                    if(settings.frequenc == 'day'):
+                        interval.every = 1
+                    if(settings.frequenc == 'two_days'):
+                        interval.every = 2
+                    if(settings.frequenc == 'week'):
+                        interval.every = 7
+                    interval.save()
+                    # periodic_task.start_time = settings.time
+                    # dd= str(date.today())+" "+str(settings.time)
+                    periodic_task.start_time = datetime(date.today().year, date.today().month, date.today().day, settings.time.hour, settings.time.minute, 00, 000000)
+                    periodic_task.save()
+                if(settings.type == 'manual'):
+                    periodic_task.enabled = False
+                    periodic_task.save()
                 success_settings = 'The modification has successfully been saved'
+                # return HttpResponse(crontab)
                 return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment,'success_settings' : success_settings, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
             else:
                 msg_settings = 'Form is not valid'
                 return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment ,'msg_settings' : msg_settings, "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin})
         else:
             return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin})
-
     else:
         form = User_register()
         form_settings = IntegrationSettingsForm(instance=settings)
         return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment , "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin})
+
+
+
+
+def integration_schedule(datetime):
+    settings=IntegrationSettings.objects.get(id=1)
+    if(settings.frequenc == 'day'):
+        schedule, created = CrontabSchedule.objects.get_or_create(
+            minute=settings.time.minute,
+            hour=settings.time.hour,
+            day_of_week='*',
+            day_of_month='*',
+            month_of_year='*',
+        )
+    elif(settings.frequenc == 'two_days'):
+        schedule, created = CrontabSchedule.objects.get_or_create(
+            minute=settings.time.minute,
+            hour=settings.time.hour,
+            day_of_week='*',
+            day_of_month='*',
+            month_of_year='*',
+        )
+    elif(settings.frequenc == 'week'):
+        schedule, created = CrontabSchedule.objects.get_or_create(
+            minute=settings.time.minute,
+            hour=settings.time.hour,
+            day_of_week='*',
+            day_of_month='*',
+            month_of_year='*',
+        )
+    task = PeriodicTask.objects.create(
+            crontab = schedule,
+            name = "schedule_mail_task_"+ str(random.randint(0,99999)),
+            task = 'app.tasks.test_func'
+        )
+
+
+
+def dateNextIntegration():
+    periodic_task = PeriodicTask.objects.get(name='schedule_mail_task_2')
+    settings = IntegrationSettings.objects.get(id=1)
+    if(periodic_task.last_run_at != None):
+        date = periodic_task.last_run_at.date()
+    else:
+        date = periodic_task.date_changed.date()
+    present = datetime.now().date()
+    if(date < present):
+        date2 = present
+    else:
+        date2 = date
+    present_time = datetime.now().time()
+    time = settings.time
+
+    if(present_time < time):
+        k = 0
+    else:
+        k = 1
+    if(settings.frequenc == 'day'):
+        if (k==1):
+            return date2 + timedelta(1)
+        else:
+            return date2
+    elif(settings.frequenc == 'two_days'):
+        return date + timedelta(2)
+    elif(settings.frequenc == 'week'):
+        return date + timedelta(days=7)
+    # return HttpResponse(date2)
+
+
+
+
+
+
+# def dateNextIntegration():
+#     request = IntegrationSettings.objects.get(id=1)
+#     if(request.frequenc == 'day'):
+#         return datetime.today()
+#     elif(request.frequenc == 'two_days'):
+#         return request.update_date.date() + timedelta(2)
+#     elif(request.frequenc == 'week'):
+#         return request.update_date.date() + timedelta(days=7)
+
+def test3(request):
+    periodic_task = PeriodicTask.objects.get(name='schedule_mail_task_2')
+    settings = IntegrationSettings.objects.get(id=1)
+    if(periodic_task.last_run_at != None):
+        date = periodic_task.last_run_at.date()
+    else:
+        date = periodic_task.date_changed.date()
+    present = datetime.now().date()
+    if(date < present):
+        date2 = present
+    else:
+        date2 = date
+    present_time = datetime.now().time()
+    time = settings.time
+
+    if(present_time < time):
+        k = 0
+    else:
+        k = 1
+    k=1
+    if(request.frequenc == 'day'):
+        if (k==1):
+            return date + timedelta(1)
+        else:
+            return date
+    elif(request.frequenc == 'two_days'):
+        return date.date() + timedelta(2)
+    elif(request.frequenc == 'week'):
+        return date.date() + timedelta(days=7)
+    # return HttpResponse(date2)
+
+
+
 
 
 
@@ -252,7 +383,6 @@ def settings_user_update(request, id):
     segment='settings'
     user=User.objects.get(id=id)
     form = UserUpdateForm(instance=user)
-    # users=User.objects.all()
     settings=IntegrationSettings.objects.get(id=1)
     form_settings = IntegrationSettingsForm(request.POST, instance=settings)
     if request.method == "POST":
@@ -260,20 +390,37 @@ def settings_user_update(request, id):
             form = UserUpdateForm(request.POST,instance=user)
             if form.is_valid():
                 form.save()
-                # username = form.cleaned_data.get("username")
-                # raw_password = form.cleaned_data.get("password")
-                # user = authenticate(username=username, password=raw_password)
-                # msg = 'User created - please <a href="/login">login</a>.'
                 success = 'success'
-                # request = None
-                return render(request, "home/admin/settings_user_update.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
+                return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
             else:
                 msg = 'Form is not valid'
-        elif request.POST.get('integration_frequency'):
-            form = UserUpdateForm(request.POST)
+        elif request.POST.get('frequenc'):
+            form = User_register(request.POST)
+            form_settings = IntegrationSettingsForm(request.POST, instance=settings)
             if form_settings.is_valid():
                 form_settings.save()
-                return render(request, "home/admin/settings_user_update.html",{"form": form, "msg": msg, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
+                periodic_task = PeriodicTask.objects.get(name='schedule_mail_task_2')
+                if(settings.type == 'automatic'):
+                    periodic_task.enabled = True
+                    interval = IntervalSchedule.objects.get(id=periodic_task.interval_id)
+                    if(settings.frequenc == 'day'):
+                        interval.every = 1
+                    if(settings.frequenc == 'two_days'):
+                        interval.every = 2
+                    if(settings.frequenc == 'week'):
+                        interval.every = 7
+                    interval.save()
+                    periodic_task.start_time = datetime(date.today().year, date.today().month, date.today().day, settings.time.hour, settings.time.minute, 00, 000000)
+                    periodic_task.save()
+                if(settings.type == 'manual'):
+                    periodic_task.enabled = False
+                    periodic_task.save()
+                success_settings = 'The modification has successfully been saved'
+                return render(request, "home/admin/settings.html",{"form": form, "msg": msg, "success": success,"segment": segment,'success_settings' : success_settings, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
+            else:
+                msg_settings = 'Form is not valid'
+                return render(request, "home/admin/settings.html", {"form": form, "msg": msg, "success": success,"segment": segment ,'msg_settings' : msg_settings, "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin})
+        
     else:
         form = UserUpdateForm(instance=user)
         form_settings = IntegrationSettingsForm(instance=settings)
@@ -343,10 +490,3 @@ def pages(request,a):
         users = paginator.page(paginator.num_pages)
         return users
 
-def dateNextIntegration(request):
-    if(request.frequenc == 'day'):
-        return datetime.today()
-    elif(request.frequenc == 'two_days'):
-        return request.update_date.date() + timedelta(2)
-    elif(request.frequenc == 'week'):
-        return request.update_date.date() + timedelta(days=7)

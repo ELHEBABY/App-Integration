@@ -1,5 +1,5 @@
 from cgitb import handler
-from . import views
+from . import views, views_integration
 from django.contrib import admin
 from django.urls import path, re_path
 from django.contrib.auth.views import LogoutView
@@ -18,12 +18,19 @@ urlpatterns = [
     path('profile/', views.profile,name="profile"),
     path('settings/', views.settings,name="settings"),
     path('settings/user/update/<int:id>', views.settings_user_update,name="update"),
+
+
+
+
+
+    path('launch_the_integration', views_integration.launch_the_integration,name="launch_the_integration"),
+
+
+
     path('lol/', views.success,name="success"),
-
-
-
     path('test/', views.test,name="test"),
-    path('test2/', views.test2,name="test2"),
+    # path('test2/', views.test2,name="test2"),
+    path('test3/', views.test3,name="test3"),
     
     # path('home/', views.index),
 
