@@ -28,6 +28,8 @@ class IntegrationSettings(models.Model):
 
     time = models.TimeField("time", default="00:00:00", null=True)
 
+    email_reporting = models.EmailField(max_length=254)
+
     def __init__(self, *args, **kwargs):
         super(IntegrationSettings, self).__init__(*args, **kwargs)
         self.update_date=self.update_date

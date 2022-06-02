@@ -1,6 +1,8 @@
 import json
 import  pyodbc 
 import datetime
+import os
+
 
 def synchSage(head, conn):
     try:

@@ -31,15 +31,14 @@ def synchSQL(Table_Vantage, Table_SQL, head, conn):
                         replace(", ''",", '").replace("'',","',").replace("'')","')").\
                         replace("None","Null").replace("False","0").replace("True","1")
             UpdateText = str(dict( zip(KeysTuple,KeysTuple) )).replace("', '",', TARGET.').replace("': '",'=SOURCE.').\
-                     replace("{'",'').replace("'}",'')
+                    replace("{'",'').replace("'}",'')
             sQlMerge= "MERGE "+ Table_SQL +" AS TARGET"\
-                      " USING (VALUES "+ValuesText+") AS SOURCE"+KeysText+\
-                      "ON (TARGET.ID = SOURCE.ID)" +\
-                      "WHEN NOT MATCHED THEN INSERT "+KeysText+" VALUES "+ValuesText+\
-                      "WHEN MATCHED THEN UPDATE SET "+UpdateText+";"
+                    " USING (VALUES "+ValuesText+") AS SOURCE"+KeysText+\
+                    "ON (TARGET.ID = SOURCE.ID)" +\
+                    "WHEN NOT MATCHED THEN INSERT "+KeysText+" VALUES "+ValuesText+\
+                    "WHEN MATCHED THEN UPDATE SET "+UpdateText+";"
             n=n+1
             print(n)
             cursor.execute(sQlMerge)
             conn.commit()
         
- 

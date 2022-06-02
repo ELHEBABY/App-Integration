@@ -202,9 +202,15 @@ class IntegrationSettingsForm(forms.ModelForm):
         )
     )
 
+    email_reporting = forms.EmailField(
+        initial='',
+        widget=forms.EmailInput(
+            attrs={'class': 'form-control'}),
+        required=True)
+
     class Meta:
         model = IntegrationSettings
-        fields = ('type', 'frequenc','time')
+        fields = ('type', 'frequenc','time','email_reporting')
 
 
 

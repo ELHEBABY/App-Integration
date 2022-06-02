@@ -198,7 +198,7 @@ def settings(request):
     settings=IntegrationSettings.objects.get(id=1)
     form_settings = IntegrationSettingsForm( instance=settings)
     if request.method == "POST":
-        if request.POST.get('first_name'):
+        if request.POST.get('email'):
             form = User_register(request.POST)
             # form.username='user'
             if form.is_valid():
@@ -207,10 +207,10 @@ def settings(request):
                 users = pages(request,7)
                 return render(request, "home/admin/settings.html",{"form": form, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
             else:
-                msg = 'Form is not valid'
-                return render(request, "home/admin/settings.html",{"form": form, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin})
+                msg1 = 'Form is not valid'
+                return render(request, "home/admin/settings.html",{"form": form, "success": success,"segment": segment, "users" : users,'form_settings' : form_settings, "is_admin" : is_admin, "msg1" : msg1})
         elif request.POST.get('frequenc'):
-            form = User_register(request.POST)
+            form = User_register()
             form_settings = IntegrationSettingsForm(request.POST, instance=settings)
             if form_settings.is_valid():
                 form_settings.save()
@@ -294,7 +294,7 @@ def integration_schedule(datetime):
 
 
 def dateNextIntegration():
-    periodic_task = PeriodicTask.objects.get(name='schedule_mail_task_2')
+    periodic_task = PeriodicTask.objects.get(name='schedule_mail_task_1')
     settings = IntegrationSettings.objects.get(id=1)
     if(periodic_task.last_run_at != None):
         date = periodic_task.last_run_at.date()
@@ -321,7 +321,6 @@ def dateNextIntegration():
         return date + timedelta(2)
     elif(settings.frequenc == 'week'):
         return date + timedelta(days=7)
-    # return HttpResponse(date2)
 
 
 

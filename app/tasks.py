@@ -1,6 +1,7 @@
 import time
 from celery import shared_task
 from click import echo
+from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 import random
@@ -12,14 +13,14 @@ from .models import IntegrationSettings, Integrations
 
 @shared_task
 def test_func():
-    print('lol')
-    
     template = render_to_string('home/email.html')
+    settings=IntegrationSettings.objects.get(id=1)
     email=EmailMessage(
         'subject',
         template,
         'pferendezvous@gmail.com',
-        ['elmehdi.elhebaby@gmail.com'],
+        [settings.email_reporting],
+        # ['elmehdi.elhebaby@gmail.com'],
     )
     email.fail_silently=False
     email.send()
