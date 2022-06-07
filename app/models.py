@@ -1,34 +1,31 @@
-from datetime import datetime
-import email
-from pyexpat import model
-from statistics import mode
-from time import time
 from django.db import models
-import datetime
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import ModelBackend
-
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import check_password
 
 class IntegrationSettings(models.Model):
 
-    chois =(
-        ('automatic','automatic'),
-        ('manual','manual'))
+    chois = (
+        ('automatic', 'automatic'),
+        ('manual', 'manual')
+        )
     type = models.CharField("Type", max_length=50,  choices=chois)
     
-    frequency =(
-        ('day','day'),
-        ('two_days','two days'),
-        ('week','week'))
+    frequency = (
+        ('day', 'day'),
+        ('two_days', 'two days'),
+        ('week', 'week')
+        )
     frequenc = models.CharField("frequenc", max_length=50, choices=frequency)
-
+    
     update_date = models.DateTimeField("update date", auto_now_add=True)
-
     time = models.TimeField("time", default="00:00:00", null=True)
-
     email_reporting = models.EmailField(max_length=254)
+    email_conix_reporting = models.EmailField(max_length=254, default=None)
+    email_conix_reporting_psw = models.CharField(max_length=100, default=None)
 
     def __init__(self, *args, **kwargs):
         super(IntegrationSettings, self).__init__(*args, **kwargs)
@@ -38,19 +35,21 @@ class IntegrationSettings(models.Model):
         self.update_date = timezone.now()
         super(IntegrationSettings, self).save (*args, ** kwargs)
 
+
+
 class Integrations(models.Model):
     
     title = models.CharField("Title", max_length=50)
 
     chois_table =(
-        ('customer','customer'),
-        ('finance','finance'))
-    table = models.CharField("Table", max_length=50,  choices=chois_table)
+        ('customer', 'customer'),
+        ('finance', 'finance'))
+    table = models.CharField("Table", max_length=50, choices=chois_table)
 
-    chois_status =(
-        ('success','success'),
-        ('erreur','erreur'))
-    status = models.CharField("Status", max_length=50,  choices=chois_status)
+    chois_status = (
+        ('success', 'success'),
+        ('erreur', 'erreur'))
+    status = models.CharField("Status", max_length=50, choices=chois_status)
 
     description = models.CharField("Description", max_length=350, default='description')
 
@@ -61,9 +60,6 @@ class Integrations(models.Model):
 
 
 
-
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import check_password
 
 class EmailAuthBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
@@ -82,10 +78,6 @@ class EmailAuthBackend(ModelBackend):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
-
-
-
-
 
 
 

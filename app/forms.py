@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.models import User
-
 from .models import IntegrationSettings
 
 
@@ -28,7 +27,7 @@ class User_register(UserCreationForm):
             attrs={
                 "placeholder": "First name",
                 "class": "form-control",
-                'checked' : 'checked'
+                'checked': 'checked'
             }
         ))
     last_name = forms.CharField(
@@ -52,34 +51,17 @@ class User_register(UserCreationForm):
                 "class": "form-control"
             }
         ))
-    password= forms.CharField(
+    password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "Password",
                 "class": "form-control"
             }
         ))
-    # is_active= forms.ChoiceField(
-    #     widget=forms.RadioSelect(
-    #         attrs={
-    #             "placeholder": "Is Active",
-    #             "class": "form-control"
-    #         }
-    #     ))
-    # password2 = forms.CharField(
-    #     widget=forms.PasswordInput(
-    #         attrs={
-    #             "placeholder": "Password check",
-    #             "class": "form-control"
-    #         }
-    #     ))
-
-    # password2 = password1
-
 
     class Meta:
         model = User
-        fields = ( 'first_name', 'last_name', 'username', 'email', 'password','is_active')
+        fields = ( 'first_name', 'last_name', 'username', 'email', 'password', 'is_active')
 
 
 
@@ -112,26 +94,10 @@ class UserUpdateForm(forms.ModelForm):
                 "class": "form-control"
             }
         ))
-    # is_active = forms.BooleanField(
-        # widget=forms.ChoiceField(
-        #     attrs={
-        #         "placeholder": "Is active",
-        #         "class": "form-control"
-        #     }
-
-        # )
-        # widget=forms.RadioSelect(choices=("False", "True"))
-        # )
-    # is_active = forms.CharField(
-    #     widget=forms.RadioSelect(
-    #         attrs={
-    #             "placeholder": "Is active",
-    #             "class": "form-control"
-    #         }
-    #     ))
+        
     class Meta:
         model = User
-        fields = ('username', 'email','last_name','first_name','is_active')
+        fields = ('username', 'email', 'last_name', 'first_name', 'is_active')
 
 
 class SignUpForm(UserCreationForm):
@@ -173,8 +139,8 @@ class SignUpForm(UserCreationForm):
 class IntegrationSettingsForm(forms.ModelForm):
 
     chois =(
-        ('automatic','automatic'),
-        ('manual','manual'))
+        ('automatic', 'automatic'),
+        ('manual', 'manual'))
     type = forms.ChoiceField(
         label="Type",
         initial='',
@@ -182,23 +148,27 @@ class IntegrationSettingsForm(forms.ModelForm):
         widget=forms.Select(
             attrs={'class': 'form-control',
             'placeholder' : 'Type'}),
-        required=True)
+        required=True
+        )
 
     frequency =(
-        ('day','Day'),
-        ('two_days','Two days'),
-        ('week','Week'))
+        ('day', 'Day'),
+        ('two_days', 'Two days'),
+        ('week', 'Week')
+        )
     frequenc = forms.ChoiceField(
         label="Frequenc",
         initial='',
         choices=frequency,
         widget=forms.Select(
             attrs={'class': 'form-control',
-            'placeholder' : 'Frequenc'}),
-        required=True)
+            'placeholder' : 'Frequenc'}
+            ),
+        required=True
+        )
 
     time = forms.TimeField(
-        widget = forms.TimeInput(format='%H:%M', attrs={'class': 'form-control','type': 'time'}
+        widget = forms.TimeInput(format='%H:%M', attrs={'class': 'form-control', 'type': 'time'}
         )
     )
 
@@ -206,11 +176,28 @@ class IntegrationSettingsForm(forms.ModelForm):
         initial='',
         widget=forms.EmailInput(
             attrs={'class': 'form-control'}),
-        required=True)
+        required=True
+        )
+
+
+    email_conix_reporting = forms.EmailField(
+        initial='',
+        widget=forms.EmailInput(
+            attrs={'class': 'form-control'}),
+        required=True
+        )
+    
+    email_conix_reporting_psw = forms.CharField(
+        initial='',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
+        required=True
+        )
+
 
     class Meta:
         model = IntegrationSettings
-        fields = ('type', 'frequenc','time','email_reporting')
+        fields = ('type', 'frequenc', 'time', 'email_reporting', 'email_conix_reporting', 'email_conix_reporting_psw')
 
 
 
@@ -222,54 +209,44 @@ class PasswordChangeForm(PasswordChangeForm):
             attrs={
                 "placeholder": "Old password :",
                 "class": "form-control"
-            }
-        ))
+                }
+            )
+        )
 
-    new_password1= forms.CharField(label="New password",
+    new_password1 = forms.CharField(label="New password",
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "New password",
                 "class": "form-control"
-            }
-        ))
+                }
+            )
+        )
     
-    new_password2= forms.CharField(label="New password confirmation",
+    new_password2 = forms.CharField(label="New password confirmation",
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "New password confirmation ",
                 "class": "form-control"
-            }
-        ))
+                }
+            )
+        )
 
     class Meta:
         model = IntegrationSettings
-        fields = ('old_password','new_password1', 'new_password2')
-
-
-
-
-
+        fields = ('old_password', 'new_password1', 'new_password2')
 
 
 
 class ChangePasswordForm(forms.ModelForm):
     
-    password= forms.CharField(
+    password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "Password",
                 "class": "form-control"
-            }
-        ))
-        
-# password2 = forms.CharField(
-    #     widget=forms.PasswordInput(
-    #         attrs={
-    #             "placeholder": "Password check",
-    #             "class": "form-control"
-    #         }
-    #     ))
-
+                }
+            )
+        )
 
     class Meta:
         model = User

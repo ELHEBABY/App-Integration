@@ -1,11 +1,8 @@
-
-
-
 from django.shortcuts import redirect
-from .tasks import test_func
+from .tasks import integrationTask
 
 def launch_the_integration(request):
-    test_func()
+    integrationTask()
     return redirect("/integration")
 
 
