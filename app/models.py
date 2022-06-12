@@ -39,24 +39,23 @@ class IntegrationSettings(models.Model):
 
 class Integrations(models.Model):
     
-    title = models.CharField("Title", max_length=50)
-
-    chois_table =(
-        ('customer', 'customer'),
-        ('finance', 'finance'))
-    table = models.CharField("Table", max_length=50, choices=chois_table)
+    date_time = models.DateTimeField("Datetime") 
 
     chois_status = (
         ('success', 'success'),
         ('erreur', 'erreur'))
     status = models.CharField("Status", max_length=50, choices=chois_status)
 
-    description = models.CharField("Description", max_length=350, default='description')
+    description = models.CharField("Description", max_length=550, default='description')
 
-    date_time = models.DateTimeField("Datetime", auto_now_add=True) 
+    chois = (
+        ('automatic', 'automatic'),
+        ('manual', 'manual')
+        )
+    type = models.CharField("Type", max_length=50,  choices=chois)
     
     def __str__(self):
-        return self.title
+        return  str(self.date_time)
 
 
 

@@ -15,16 +15,17 @@
     <div class="row gx-4">
       <div class="col-auto">
         <div class="avatar avatar-xl position-relative">
-          <img src="/static/assets/img/bruce-mars.jpg" alt="..." class="w-100 border-radius-lg shadow-sm">
-          <a href="javascript:;" class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2">
+          <img src="/static/assets/img/kal-visuals-square.png" alt="..." class="w-100 rounded-circle shadow-sm">
+          {% comment %} <a href="javascript:;" class="btn btn-sm btn-icon-only bg-gradient-light position-absolute bottom-0 end-0 mb-n2 me-n2">
             <i class="fa fa-pen top-0" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Image"></i>
-          </a>
+          </a> {% endcomment %}
         </div>
       </div>
       <div class="col-auto my-auto">
         <div class="h-100">
           <h5 class="mb-1">
-            Alec Thompson
+            {% firstof request.user.first_name %}
+            {% firstof  request.user.last_name %} 
           </h5>
           <p class="mb-0 font-weight-bold text-sm">
             Admin 
@@ -107,60 +108,31 @@
           </div>
         </div>
       </div>
-                  {% comment %}                   
-                  <div class="mb-3">
-                    {{ form.is_active }}
-                  </div>
-                  <span class="text-error">{{ form.is_active.errors }}</span>
-                   {% endcomment %}
-                  {% comment %} <input type="hidden" name="_method" value="put">                                                                                    <input type="hidden" name="_token" value="9QixY4kA4m94ucf6cGxh0azAmitoSiYwfXF2YUXV">                                                                                    <label for=""></label>
-                  <label class="custom-toggle">
-                      <input type="checkbox" onchange="this.form.submit()" name="active">
-                      <span class="custom-toggle-slider rounded-circle"></span>
-                  </label> {% endcomment %}
-                
-
-                  {% comment %} <label>Password Check</label>
-                  <div class="mb-3">
-                    {{ form.password2 }}
-                  </div>
-                  <span class="text-error">{{ form.password2.errors }}</span> {% endcomment %}
-
     </div>
-
-
 
     <div class="col-12 col-xl-5 col-md-5 d-flex flex-column mx-auto">
       <div class="card mb-4">
-        {% comment %} <div class="card-header pb-0 p-3"> {% endcomment %}
         <div class="card-header  pb-0 text-left bg-transparent">
           <h4 class="text-info text-gradient">Users</h4>
         </div>
         <div class="card-body p-3">
-          <div class="accordion-1">
-            {% comment %} <div class="container"> {% endcomment %}
-            {% comment %} <div class="row"> {% endcomment %}
-              <div class=" mx-auto">
                 <div class="accordion" id="accordionRental">
                   <ul class="list-group border-0 py-3">
-                  {% comment %} <div class="accordion-item mb-3"> {% endcomment %}
                     {% for user in users %}
                     <li class="list-group-item border-0 height-20 " >
-                      {% comment %} <li class="list-group-item border-0 height-20 " style=" height: 107px;"> {% endcomment %}
                       <div class="d-flex mx-auto flex-column" style=" height: 60px;">
                         <h6 class="accordion-header" id="headingOne">
                           <div class="d-flex flex-column mx-auto">
                             <div class="row ">
                             <div class="col-xl-2 col-md-2 col-3">
                               <div class="avatar me-3">
-                                <img src="/static/assets/img/kal-visuals-square.jpg" alt="kal" class="border-radius-lg shadow">
+                                <img src="/static/assets/img/kal-visuals-square.png" alt="kal" class="rounded-circle shadow">
                               </div>
                             </div>
                             <div class="col-md-5 col-xl-5 col-4">
                               <div class="    ">
                                 <h6 class=" text-sm">{{user.first_name}} {{user.last_name}}</h6>
                                 {% if user.is_active %}
-                                    {% comment %} <div class="container"></div> {% endcomment %}
                                 <span class="text-success">●<small > Active</small></span>
                                 {% else %}
                                 <span class="text-danger">● <small>Inactive</small></span>
@@ -231,23 +203,81 @@
         </div>
       </div>
     </div>
-    <div class="col-12 col-xl-4">
-      <div class="card mb-4">
-        <div class="card-header pb-0 p-3">
-          <h6 class="mb-0">Integration Settings</h6>
-        </div>
-        <div class="card-body p-3">
-          <div class="form-group"></div>
-            <form method="POST" role="form ">
-              {% csrf_token%}
-              {{ form_settings.as_p }}
-              <div class="text-center">
-                <button type="submit" name="update_settings" class="btn bg-gradient-info w-50 mt-4 mb-0">Save</button>
-              </div>
-            </form>
+    <div class="col-12 col-xl-10 container-fluid">
+      <div class="card ">
+        <div class="card-header pb-0 p-4">
+          {% if success_settings %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <span class="alert-icon text-white"><i class="ni ni-like-2"></i></span>
+            <span class="alert-text text-white"><strong></strong> {{success_settings}}</span>
+            <button type="button" class="btn-close text-white" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
+          {% endif %}
+          <h4 class="text-info text-gradient">
+            Integration Settings
+          </h4>
+          {% if msg %}
+          {{  safe }}
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <span class="alert-icon text-white"><i class="ni ni-like-2"></i></span>
+            <span class="alert-text text-white"><strong>Warning! Form is not valid</strong> {{msg}}!</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endif %}
         </div>
+        <form method="POST">
+          {% csrf_token%}
+          <div class="d-flex flex-row ">
+            <div class="col-4 col-xl-5 ps-6">
+              <div class="card-body ">
+                <label>Type:</label>
+                <div class="mb-3">
+                  {{ form_settings.type }}
+                </div>
+                <span class="text-error">{{ form_settings.type.errors }}</span>
+
+                <label>Frequenc:</label>
+                <div class="mb-3">
+                  {{ form_settings.frequenc }}
+                </div>
+                <span class="text-error">{{ form_settings.frequenc.errors }}</span>
+
+                <label>Time:</label>
+                <div class="mb-3">
+                  {{ form_settings.time }}
+                </div>
+                <span class="text-error">{{ form_settings.time.errors }}</span>
+
+                <label>Email reporting:</label>
+                <div class="mb-3">
+                  {{ form_settings.email_reporting }}
+                </div>
+                <span class="text-error">{{ form_settings.email_reporting.errors }}</span>
+              </div>
+            </div>
+            <div class="col-4 col-xl-2">
+            </div>
+            <div class="col-4 col-xl-5 pe-6">
+              <div class="card-body">
+                <label>Email conix reporting</label>
+                <div class="mb-3">
+                  {{ form_settings.email_conix_reporting }}
+                </div>
+                <span class="text-error">{{ form_settings.email_conix_reporting.errors }}</span>
+                <label>Email conix reporting psw:</label>
+                <div class="mb-3">
+                  {{ form_settings.email_conix_reporting_psw }}
+                </div>
+                <span class="text-error">{{ form_settings.email_conix_reporting_psw.errors }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-center pb-3">
+            <button type="submit" name="update_settings" class="btn bg-gradient-info w-30 mb-0">Save</button>
+          </div>
+        </form>
       </div>
+
     </div>
 
 

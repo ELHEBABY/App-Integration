@@ -26,7 +26,8 @@
       <div class="col-auto my-auto">
         <div class="h-100">
           <h5 class="mb-1">
-            Alec Thompson
+            {% firstof request.user.first_name %}
+            {% firstof  request.user.last_name %}
           </h5>
           <p class="mb-0 font-weight-bold text-sm">
             Admin
@@ -130,62 +131,62 @@
             <div class=" mx-auto">
               <div class="accordion" id="accordionRental">
                 <ul class="list-group border-0 py-3">
-                    {% for user in users %}
-                    <li class="list-group-item border-0 height-20 ">
-                      <div class="d-flex mx-auto flex-column" style=" height: 60px;">
-                        <h6 class="accordion-header" id="headingOne">
-                          <div class="d-flex flex-column mx-auto">
-                            <div class="row ">
-                              <div class="col-xl-2 col-md-2 col-3">
-                                <div class="avatar me-3">
-                                  <img src="/static/assets/img/kal-visuals-square.png" alt="kal"
-                                    class="rounded-circle shadow">
-                                </div>
-                              </div>
-                              <div class="col-md-5 col-xl-5 col-4">
-                                <div class="    ">
-                                  <h6 class=" text-sm">{{user.first_name}} {{user.last_name}}</h6>
-                                  {% if user.is_active %}
-                                  {% comment %} <div class="container"></div> {% endcomment %}
-                                  <span class="text-success">●<small> Active</small></span>
-                                  {% else %}
-                                  <span class="text-danger">● <small>Inactive</small></span>
-                                  {% endif %}
-                                </div>
-                              </div>
-                              <div class="col-md-2 col-2 col-xl-2">
-                                <button class="accordion-button btn btn-link ">
-                                  <a class="btn btn-link   " href="/settings/user/update/{{user.id}}">Edit</a>
-                                </button>
-                              </div>
-                              <div class="col-md-2 col-2 col-xl-2">
-                                <button class="accordion-button btn btn-link " type="button" data-bs-toggle="collapse"
-                                  data-bs-target="#m{{user.id}}" aria-expanded="false" aria-controls="collapseOne">
-                                  <a class="btn btn-link  " href="">Info</a>
-                                </button>
+                  {% for user in users %}
+                  <li class="list-group-item border-0 height-20 ">
+                    <div class="d-flex mx-auto flex-column" style=" height: 60px;">
+                      <h6 class="accordion-header" id="headingOne">
+                        <div class="d-flex flex-column mx-auto">
+                          <div class="row ">
+                            <div class="col-xl-2 col-md-2 col-3">
+                              <div class="avatar me-3">
+                                <img src="/static/assets/img/kal-visuals-square.png" alt="kal"
+                                  class="rounded-circle shadow">
                               </div>
                             </div>
+                            <div class="col-md-5 col-xl-5 col-4">
+                              <div class="    ">
+                                <h6 class=" text-sm">{{user.first_name}} {{user.last_name}}</h6>
+                                {% if user.is_active == 1 %}
+                                <span class="text-success">●<small> Active</small></span>
+                                {% endif %}
+                                {% if user.is_active == 0 %}
+                                <span class="text-danger">● <small>Inactive</small></span>
+                                {% endif %}
+                              </div>
+                            </div>
+                            <div class="col-md-2 col-2 col-xl-2">
+                              <button class="accordion-button btn btn-link ">
+                                <a class="btn btn-link   " href="/settings/user/update/{{user.id}}">Edit</a>
+                              </button>
+                            </div>
+                            <div class="col-md-2 col-2 col-xl-2">
+                              <button class="accordion-button btn btn-link " type="button" data-bs-toggle="collapse"
+                                data-bs-target="#m{{user.id}}" aria-expanded="false" aria-controls="collapseOne">
+                                <a class="btn btn-link  " href="">Info</a>
+                              </button>
+                            </div>
                           </div>
-                        </h6>
-                      </div>
-                      <div id="m{{user.id}}" class="accordion-collapse collapse border-0 " aria-labelledby="headingOne"
-                        data-bs-parent="#accordionRental" style="">
-                        <div class="accordion-body text-sm opacity-8 mt-n1">
-                          <table>
-                            <tr>
-                              <th> Username :</th>
-                              <td>{{user.username}}</td>
-                            </tr>
-                            <tr>
-                              <th> Email :</th>
-                              <td>{{user.email}}</td>
-                            </tr>
-                          </table>
-                          <br>
                         </div>
+                      </h6>
+                    </div>
+                    <div id="m{{user.id}}" class="accordion-collapse collapse border-0 " aria-labelledby="headingOne"
+                      data-bs-parent="#accordionRental" style="">
+                      <div class="accordion-body text-sm opacity-8 mt-n1">
+                        <table>
+                          <tr>
+                            <th> Username :</th>
+                            <td>{{user.username}}</td>
+                          </tr>
+                          <tr>
+                            <th> Email :</th>
+                            <td>{{user.email}}</td>
+                          </tr>
+                        </table>
+                        <br>
                       </div>
-                    </li>
-                    {% endfor %}
+                    </div>
+                  </li>
+                  {% endfor %}
                 </ul>
                 <div class="justify-content-end">
                   <nav aria-label="Page navigation example">
@@ -221,12 +222,8 @@
       </div>
     </div>
 
-
-
     <div class="col-12 col-xl-10 container-fluid">
-      <div class="card mb-8">
-
-
+      <div class="card ">
         <div class="card-header pb-0 p-4">
           {% if success_settings %}
           <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -247,90 +244,58 @@
           </div>
           {% endif %}
         </div>
-        
-              <form method="POST">
-                {% csrf_token%}
-
-        <div class="d-flex flex-row ">
-          <div class="col-4 col-xl-5 ps-6">
-
-            <div class="card-body ">
-                {% comment %} {{ form_settings.as_p }} {% endcomment %}
-
+        <form method="POST">
+          {% csrf_token%}
+          <div class="d-flex flex-row ">
+            <div class="col-4 col-xl-5 ps-6">
+              <div class="card-body ">
                 <label>Type:</label>
-                  <div class="mb-3">
-                    {{ form_settings.type }}
-                  </div>
-                  <span class="text-error">{{ form_settings.type.errors }}</span>
-
+                <div class="mb-3">
+                  {{ form_settings.type }}
+                </div>
+                <span class="text-error">{{ form_settings.type.errors }}</span>
 
                 <label>Frequenc:</label>
-                  <div class="mb-3">
-                    {{ form_settings.frequenc }}
-                  </div>
-                  <span class="text-error">{{ form_settings.frequenc.errors }}</span>
-
-                  <label>Time:</label>
-                  <div class="mb-3">
-                    {{ form_settings.time }}
-                  </div>
-                  <span class="text-error">{{ form_settings.time.errors }}</span>
-
-                  <label>Email reporting:</label>
-                  <div class="mb-3">
-                    {{ form_settings.email_reporting }}
-                  </div>
-                  <span class="text-error">{{ form_settings.email_reporting.errors }}</span>
-
-
-                {% comment %} <div class="text-center">
-                  <button type="submit" name="update_settings" class="btn bg-gradient-info w-50 mt-4 mb-0">Save</button>
+                <div class="mb-3">
+                  {{ form_settings.frequenc }}
                 </div>
-              </form> {% endcomment %}
-            </div>
-          </div>
-          <div class="col-4 col-xl-2">
-          </div>
-          <div class="col-4 col-xl-5 pe-6">
+                <span class="text-error">{{ form_settings.frequenc.errors }}</span>
 
-            <div class="card-body">
-              {% comment %} <form method="POST">
-                {% csrf_token%} {% endcomment %}
-                
+                <label>Time:</label>
+                <div class="mb-3">
+                  {{ form_settings.time }}
+                </div>
+                <span class="text-error">{{ form_settings.time.errors }}</span>
+
+                <label>Email reporting:</label>
+                <div class="mb-3">
+                  {{ form_settings.email_reporting }}
+                </div>
+                <span class="text-error">{{ form_settings.email_reporting.errors }}</span>
+              </div>
+            </div>
+            <div class="col-4 col-xl-2">
+            </div>
+            <div class="col-4 col-xl-5 pe-6">
+              <div class="card-body">
                 <label>Email conix reporting</label>
-                  <div class="mb-3">
-                    {{ form_settings.email_conix_reporting }}
-                  </div>
-                  <span class="text-error">{{ form_settings.email_conix_reporting.errors }}</span>
-
-
-                  <label>Email conix reporting psw:</label>
-                  <div class="mb-3">
-                    {{ form_settings.email_conix_reporting_psw }}
-                  </div>
-                  <span class="text-error">{{ form_settings.email_conix_reporting_psw.errors }}</span>
-
-                
+                <div class="mb-3">
+                  {{ form_settings.email_conix_reporting }}
+                </div>
+                <span class="text-error">{{ form_settings.email_conix_reporting.errors }}</span>
+                <label>Email conix reporting psw:</label>
+                <div class="mb-3">
+                  {{ form_settings.email_conix_reporting_psw }}
+                </div>
+                <span class="text-error">{{ form_settings.email_conix_reporting_psw.errors }}</span>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="text-center pb-3">
-                  <button type="submit" name="update_settings" class="btn bg-gradient-info w-30 mb-0">Save</button>
-                </div>
-              </form>
+          <div class="text-center pb-3">
+            <button type="submit" name="update_settings" class="btn bg-gradient-info w-30 mb-0">Save</button>
+          </div>
+        </form>
       </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

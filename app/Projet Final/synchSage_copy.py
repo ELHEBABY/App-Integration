@@ -1,11 +1,21 @@
+import imp
 import json
 import  pyodbc 
 import datetime
 import os
+from app.models import Integrations, IntegrationSettings
+        
 
 
 def synchSage(head, conn):
     try:
+        integration_date = datetime.datetime.now()        
+        integration_description = None
+        integration_status = 'success'
+        integration_settings = IntegrationSettings.objects.get(id=1)
+        integration_type = integration_settings.type
+
+
         # Ouvrir fichier log
         old_filename = 'data.txt'
         timeNow = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
@@ -13,6 +23,7 @@ def synchSage(head, conn):
         LogPath = os.path.join('./core/media', filename)
         Log = open(LogPath,'a')
         Log.write("Début de traitement : " + str(datetime.datetime.now())+"\n")
+        integration_description = "Début de traitement : " + str(datetime.datetime.now())+"\n"
 
         # Variables environementales
 
@@ -31,6 +42,7 @@ def synchSage(head, conn):
             print(len(recordsInvoice))
             if len(recordsInvoice)==0:
                 Log.write("Fin de traitement : " + str(datetime.datetime.now())+"\n")
+                integration_description += "Fin de traitement : " + str(datetime.datetime.now())+"\n"
                 #Log.close()
                 #conn.close()
                 #exit()
@@ -42,6 +54,8 @@ def synchSage(head, conn):
                 print(len(recordsClt))
                 if len(recordsClt)== 0:
                     Log.write("Err : Client inexistant : " + str(CodeClient)+" : " +str(datetime.datetime.now())+"\n")
+                    integration_description = "Err : Client inexistant : " + str(CodeClient)+" : " +str(datetime.datetime.now())+"\n"
+                    integration_status = 'erreur'
                     #Log.close()
                     #conn.close()
                     #exit()
@@ -61,6 +75,8 @@ def synchSage(head, conn):
                         ResArt = dict( zip( ChampsArt , recordsArt[0] ) )
                         if len(recordsArt)== 0:
                             Log.write("Err : Article inexistant : " + str(CodeArticle)+" : " +str(datetime.datetime.now())+"\n")
+                            integration_description += "Err : Article inexistant : " + str(CodeArticle)+" : " +str(datetime.datetime.now())+"\n"
+                            integration_status = 'erreur'
                             #Log.close()
                             #conn.close()
                             #exit()
@@ -74,6 +90,8 @@ def synchSage(head, conn):
                                 recordsStock = cursor.fetchall()
                                 if len(recordsStock)==0:
                                     Log.write("Err : Stock insuffisant : " + str(CodeArticle)+" : " +str(datetime.datetime.now())+"\n")
+                                    integration_description += "Err : Stock insuffisant : " + str(CodeArticle)+" : " +str(datetime.datetime.now())+"\n"
+                                    integration_status = 'erreur'
                                     #Log.close()
                                     #conn.close()
                                     #exit()
@@ -84,6 +102,8 @@ def synchSage(head, conn):
                                     DispoStock = ResStock['QteDispo']
                                     if DispoStock < 0:
                                         Log.write("Err : Stock insuffisant : " + str(CodeArticle)+" : " +str(datetime.datetime.now())+"\n")
+                                        integration_description += "Err : Stock insuffisant : " + str(CodeArticle)+" : " +str(datetime.datetime.now())+"\n"
+                                        integration_status = 'erreur'
                                         #Log.close()
                                         #conn.close()
                                         #exit()
@@ -114,8 +134,14 @@ def synchSage(head, conn):
                 requests.patch(Path,headers=head, json = {'ExportedDate' : str(datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))+"+01:00"})
                 
                 Log.write("Succès : Facture : " + str(Nfacture)+" : " +str(datetime.datetime.now())+"\n")
+                integration_description += "Succès : Facture : " + str(Nfacture)+" : " +str(datetime.datetime.now())+"\n"
         conn.close()
         Log.close()
+        
+        Integrations.objects.create(date_time=integration_date,
+                                    status=integration_status,
+                                    description=integration_description,
+                                    type=integration_type)
         exit()
     except Exception as err:
         Log = open('data.txt','a')
@@ -123,6 +149,14 @@ def synchSage(head, conn):
         #print(sqlInvoiceLines2Integer)
         print(err)
         Log.write("Err : Erreur Sys : " + str(err)+" : " +str(datetime.datetime.now())+"\n")
+        integration_description += "Err : Erreur Sys : " + str(err)+" : " +str(datetime.datetime.now())+"\n"
+        integration_status = 'erreur'
+        integration_date = datetime.datetime.now()
+        Integrations.objects.create(date_time=integration_date,
+                                    status=integration_status,
+                                    description=integration_description,
+                                    type=integration_type)
+
         conn.close()
         Log.close()
         exit()

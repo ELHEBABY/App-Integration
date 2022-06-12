@@ -194,7 +194,6 @@ class IntegrationSettingsForm(forms.ModelForm):
         required=True
         )
 
-
     class Meta:
         model = IntegrationSettings
         fields = ('type', 'frequenc', 'time', 'email_reporting', 'email_conix_reporting', 'email_conix_reporting_psw')

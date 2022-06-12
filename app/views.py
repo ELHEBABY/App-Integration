@@ -20,7 +20,33 @@ from django.template.loader import render_to_string
 from .tasks import integrationTask
 from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSchedule
 from .views_support import *
+import io
+from django.http import FileResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
 
+
+@login_required(login_url = "/login/")
+def history(request, id):
+    integration = Integrations.objects.get(id = id)
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    textob = c.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica", 14)
+    lines = []
+    lines.append("Datetime integration : " + str(integration.date_time))
+    lines.append("Status : " + integration.status)
+    lines.append("Description : " + integration.description)
+    lines.append(" ")
+    for line in lines:
+        textob.textLine(line)
+    c.drawText(textob)
+    c.showPage()
+    c.save()
+    buf.seek(0)
+    return FileResponse(buf, as_attachment=True, filename='Log.pdf')
 
 
 def login(request):
@@ -51,7 +77,60 @@ def logout_view(request):
 @login_required(login_url = "/login/")
 def index(request):
     is_admin = is_admin_test(request)
-    context = {'segment': 'index', "is_admin" : is_admin}
+    nbr_intrg = Integrations.objects.all().count()
+    nbr_intrg_success = Integrations.objects.filter(status='success').count()
+    nbr_intrg_erreur = Integrations.objects.filter(status='erreur').count()
+    nbr_intrg_automatic = Integrations.objects.filter(type='automatic').count()
+    nbr_intrg_manual = Integrations.objects.filter(type='manual').count()
+    jan_nbr_intg = Integrations.objects.filter(date_time__month='01').count()
+    feb_nbr_intg = Integrations.objects.filter(date_time__month='02').count()
+    mar_nbr_intg = Integrations.objects.filter(date_time__month='03').count()
+    apr_nbr_intg = Integrations.objects.filter(date_time__month='04').count()
+    may_nbr_intg = Integrations.objects.filter(date_time__month='05').count()
+    jun_nbr_intg = Integrations.objects.filter(date_time__month='06').count()
+    jul_nbr_intg = Integrations.objects.filter(date_time__month='07').count()
+    aug_nbr_intg = Integrations.objects.filter(date_time__month='08').count()
+    sep_nbr_intg = Integrations.objects.filter(date_time__month='09').count()
+    oct_nbr_intg = Integrations.objects.filter(date_time__month='10').count()
+    nov_nbr_intg = Integrations.objects.filter(date_time__month='11').count()
+    dec_nbr_intg = Integrations.objects.filter(date_time__month='12').count()
+
+    jan_nbr_intg_success = Integrations.objects.filter(date_time__month='01').filter(status='success').count()
+    feb_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='02').filter(status='success').count()
+    mar_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='03').filter(status='success').count()
+    apr_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='04').filter(status='success').count()
+    may_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='05').filter(status='success').count()
+    jun_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='06').filter(status='success').count()
+    jul_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='07').filter(status='success').count()
+    aug_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='08').filter(status='success').count()
+    sep_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='09').filter(status='success').count()
+    oct_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='10').filter(status='success').count()
+    nov_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='11').filter(status='success').count()
+    dec_nbr_intg_success = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='12').filter(status='success').count()
+
+    jan_nbr_intg_erreur = Integrations.objects.filter(date_time__month='01').filter(status='erreur').count()
+    feb_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='02').filter(status='erreur').count()
+    mar_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='03').filter(status='erreur').count()
+    apr_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='04').filter(status='erreur').count()
+    may_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='05').filter(status='erreur').count()
+    jun_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='06').filter(status='erreur').count()
+    jul_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='07').filter(status='erreur').count()
+    aug_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='08').filter(status='erreur').count()
+    sep_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='09').filter(status='erreur').count()
+    oct_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='10').filter(status='erreur').count()
+    nov_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='11').filter(status='erreur').count()
+    dec_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='12').filter(status='erreur').count()
+
+    
+    settings =IntegrationSettings.objects.get(id = 1)
+    date = dateNextIntegration()
+        
+    context = {'segment': 'index', "is_admin" : is_admin, "nbr_intrg": nbr_intrg, "nbr_intrg_automatic": nbr_intrg_automatic, "nbr_intrg_manual": nbr_intrg_manual, "nbr_intrg_success": nbr_intrg_success, "nbr_intrg_erreur": nbr_intrg_erreur, 'settings': settings, 'date': date, 'jan_nbr_intg': jan_nbr_intg, 'feb_nbr_intg': feb_nbr_intg, 'mar_nbr_intg': mar_nbr_intg, 'apr_nbr_intg': apr_nbr_intg, 'may_nbr_intg': may_nbr_intg, 'jun_nbr_intg': jun_nbr_intg, 'jul_nbr_intg': jul_nbr_intg, 'aug_nbr_intg': aug_nbr_intg, 'sep_nbr_intg': sep_nbr_intg, 'oct_nbr_intg': oct_nbr_intg, 'nov_nbr_intg': nov_nbr_intg, 'dec_nbr_intg': dec_nbr_intg, 
+    
+    'jan_nbr_intg_success': jan_nbr_intg_success, 'feb_nbr_intg_success': feb_nbr_intg_success, 'mar_nbr_intg_success': mar_nbr_intg_success, 'apr_nbr_intg_success': apr_nbr_intg_success, 'may_nbr_intg_success': may_nbr_intg_success, 'jun_nbr_intg_success': jun_nbr_intg_success, 'jul_nbr_intg_success': jul_nbr_intg_success, 'aug_nbr_intg_success': aug_nbr_intg_success, 'sep_nbr_intg_success': sep_nbr_intg_success, 'oct_nbr_intg_success': oct_nbr_intg_success, 'nov_nbr_intg_success': nov_nbr_intg_success, 'dec_nbr_intg_success': dec_nbr_intg_success,
+    
+    'jan_nbr_intg_erreur': jan_nbr_intg_erreur, 'feb_nbr_intg_erreur': feb_nbr_intg_erreur, 'mar_nbr_intg_erreur': mar_nbr_intg_erreur, 'apr_nbr_intg_erreur': apr_nbr_intg_erreur, 'may_nbr_intg_erreur': may_nbr_intg_erreur, 'jun_nbr_intg_erreur': jun_nbr_intg_erreur, 'jul_nbr_intg_erreur': jul_nbr_intg_erreur, 'aug_nbr_intg_erreur': aug_nbr_intg_erreur, 'sep_nbr_intg_erreur': sep_nbr_intg_erreur, 'oct_nbr_intg_erreur': oct_nbr_intg_erreur, 'nov_nbr_intg_erreur': nov_nbr_intg_erreur, 'dec_nbr_intg_erreur': dec_nbr_intg_erreur}
+    
     return render(request,"home/index.html", context)
 
 
@@ -62,25 +141,20 @@ def integration(request):
     settings =IntegrationSettings.objects.get(id = 1)
     date = dateNextIntegration()
     integrations = Integrations.objects.all()
+    
     context = {'integrations' : integrations, 'date' : date, "segment" : segment, 'settings' : settings, "is_admin" : is_admin}
     return render(request, "home/integration.html", context )
 
 
-@login_required(login_url = "/login/")
-def history(request, id):
-    is_admin = is_admin_test(request)
-    segment = 'history'
-    integration = Integrations.objects.get(id = id)
-    context = {'integration' : integration, "segment" : segment, "is_admin" : is_admin}
-    return render(request, "home/history_id.html", context)
 
 
-@login_required(login_url = "/login/")
-def historys(request):
-    is_admin = is_admin_test(request)
-    segment ='history'
-    context = {"segment" : segment, "is_admin" : is_admin}
-    return render(request, "home/history.html", context )
+
+# @login_required(login_url = "/login/")
+# def historys(request):
+#     is_admin = is_admin_test(request)
+#     segment ='history'
+#     context = {"segment" : segment, "is_admin" : is_admin}
+#     return render(request, "home/history.html", context )
 
 
 @login_required(login_url = "/login/")

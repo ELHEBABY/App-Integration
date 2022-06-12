@@ -94,9 +94,7 @@
               <p class="text-xs mt-1 mb-0 font-weight-bold">Date</p>
             </div>
             <h4 class="font-weight-bolder">{{ date  | date:"F d, Y" }}</h4>
-            {% comment %} <h4 class="font-weight-bolder">{{ date }}</h4> {% endcomment %}
             </div>
-
             
             <div class="col-2 py-3 ps-0">
               <div class="d-flex mb-2">
@@ -149,10 +147,10 @@
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Title</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Table</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                    {% comment %} <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Title</th> {% endcomment %}
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Datetime</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">Description</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                   </tr>
                 </thead>
@@ -161,25 +159,23 @@
                   {% if integration.status == 'success' %}
                   <tr>
                     <td>
-                      <div class="d-flex px-2 py-1">
-                        <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">{{ integration.title }}</h6>
+                      <div class="d-flex  px-2 py-1">
+                        <div class="d-flex  flex-column justify-content-center">
+                            <h6 class="mb-0 text-center text-sm">{{ integration.date_time }}</h6>
                         </div>
                       </div>
                     </td>
-                    <td>
+                    {% comment %} <td>
                       {{ integration.table }}
-                    </td>
+                    </td> {% endcomment %}
                     <td class="align-middle text-center text-sm">
                       <span class="badge badge-sm bg-gradient-success">{{ integration.status }}</span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold">{{ integration.date_time }}</span>
+                      <span class="text-secondary text-xs font-weight-bold">{{ integration.description }}</span>
                     </td>
                     <td class="align-middle">
-                      <a href="/history/{{integration.id}}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                        <i class="fa fa-ellipsis-v text-xs" aria-hidden="true"></i>
-                      </a>
+                      <a href="/history/{{integration.id}}" class="text-dark font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user"><i class="fas fa-file-pdf text-lg me-1" aria-hidden="true"></i> PDF</a>
                     </td>
                   </tr>
                   {% endif %}
@@ -196,19 +192,15 @@
         <div class="card mb-4">
           <div class="card-header pb-0">
             <h5> <span class="badge badge-sm bg-gradient-danger">Integration Erreur</span></h5>
-
-            
-
           </div>
           <div class="card-body px-0 pt-0 pb-2">
             <div class="table-responsive p-0">
               <table class="table align-items-center mb-0">
                 <thead>
                   <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Title</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Table</th>
-                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Datetime</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Description</th>
                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                   </tr>
                 </thead>
@@ -218,29 +210,19 @@
                   <tr>
                     <td>
                       <div class="d-flex px-2 py-1">
-                        <div>
-                          {% comment %} <img src="/static/assets/img/team-2.jpg" class="avatar avatar-sm me-3"> {% endcomment %}
-                        </div>
                         <div class="d-flex flex-column justify-content-center">
-                          <h6 class="mb-0 text-sm">{{ integration.title }}</h6>
-                          {% comment %} <p class="text-xs text-secondary mb-0">john@creative-tim.com</p> {% endcomment %}
+                            <h6 class="mb-0 text-sm">{{ integration.date_time }}</h6>
                         </div>
                       </div>
-                    </td>
-                    <td>
-                      {{ integration.table }}
                     </td>
                     <td class="align-middle text-center text-sm">
                       <span class="badge badge-sm bg-gradient-danger">{{ integration.status }}</span>
                     </td>
                     <td class="align-middle text-center">
-                      <span class="text-secondary text-xs font-weight-bold">{{ integration.date_time }}</span>
+                      <span class="text-secondary text-xs font-weight-bold">{{ integration.description }}</span>
                     </td>
                     <td class="align-middle">
-                      <a href="/history/{{integration.id}}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                        ...
-                      </a>
-
+                    <a href="/history/{{integration.id}}" class="text-dark font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user"><i class="fas fa-file-pdf text-lg me-1" aria-hidden="true"></i> PDF</a>
                     </td>
                   </tr>
                   {% endif %}
