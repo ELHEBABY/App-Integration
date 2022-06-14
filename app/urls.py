@@ -27,8 +27,8 @@ urlpatterns = [
 
 
 
-    path('lol/', views.success,name="success"),
-    path('test/', views.test,name="test"),
+    path('lol/', views.testlol,name="lol"),
+    path('test5/', views.test5,name="test5"),
     # path('test2/', views.test2,name="test2"),
     path('test3/', views.test3,name="test3"),
     

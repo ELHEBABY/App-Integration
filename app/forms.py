@@ -51,17 +51,34 @@ class User_register(UserCreationForm):
                 "class": "form-control"
             }
         ))
-    password = forms.CharField(
+    password1 = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "Password",
                 "class": "form-control"
             }
         ))
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Password check",
+                "class": "form-control"
+            }
+        ))
+    is_active = forms.BooleanField(
+        initial=False,
+        required=False,
+        widget=forms.NullBooleanSelect(
+            attrs={
+                "placeholder": "Is Active",
+                "class": "form-control"
+            }))
+
 
     class Meta:
         model = User
-        fields = ( 'first_name', 'last_name', 'username', 'email', 'password', 'is_active')
+        # fields = ( 'first_name', 'last_name', 'username', 'email', 'password')
+        fields = ( 'first_name', 'last_name', 'username', 'email', 'password1', 'is_active')
 
 
 

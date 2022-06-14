@@ -39,7 +39,7 @@
 </div>
 <div class="container-fluid py-4">
   <div class="row ">
-    <div class="col-xl-7 col-lg-5 col-md-5 d-flex flex-column mx-auto">
+    <div class="col-xl-7 col-lg-5 col-md-5 d-flex flex-column mx-auto" >
       <div class="card mb-3">
         <div class="card-body p-3">
           <div class="col-xl-9  ">
@@ -54,7 +54,7 @@
                   </button>
                 </div>
                 {% endif %}
-                <h4 class="text-info text-gradient">
+                <h4 class="text-info text-gradient mt-n3">
                   Add User
                 </h4>
                 <p class="mb-0">
@@ -73,45 +73,55 @@
               <div class="card-body ">
                 <form role="form " method="post" action="">
                   {% csrf_token %}
+                  {% csrf_token %}
 
                   <label>Username</label>
                   <div class="mb-3">
                     {{ formUserAdd.username }}
                   </div>
-                  <span class="text-error">{{ formUserAdd.username.errors }}</span>
+                  <span class="text-error">{{ form.username.errors }}</span>
 
                   <label>First name</label>
                   <div class="mb-3">
                     {{ formUserAdd.first_name }}
                   </div>
-                  <span class="text-error">{{ formUserAdd.first_name.errors }}</span>
+
+                  <span class="text-error">{{ form.first_name.errors }}</span>
 
                   <label>Last name</label>
                   <div class="mb-3">
                     {{ formUserAdd.last_name }}
                   </div>
-                  <span class="text-error">{{ formUserAdd.last_name.errors }}</span>
+                  <span class="text-error">{{ form.last_name.errors }}</span>
 
                   <label>Email</label>
                   <div class="mb-3">
                     {{ formUserAdd.email }}
                   </div>
-                  <span class="text-error">{{ formUserAdd.email.errors }}</span>
+                  <span class="text-error">{{ form.email.errors }}</span>
+
+                  <label>Is Active</label>
+                  <div class="mb-3">
+                    {{ formUserAdd.is_active }}
+                  </div>
+                  <span class="text-error">{{ form.is_active.errors }}</span>
 
                   <label>Password</label>
                   <div class="mb-3">
-                    {{ formUserAdd.password }}
+                    {{ formUserAdd.password1 }}
                   </div>
-                  <span class="text-error">{{ formUserAdd.password.errors }}</span>
+                  <span class="text-error">{{ form.password1.errors }}</span>
 
-                  <label>Is Active</label>
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="is_active"
-                      value={{form.is_active}} <label class="form-check-label" for="is_active">Is active</label>
+                  <label>Password Check</label>
+                  <div class="mb-3">
+                    {{ formUserAdd.password2 }}
                   </div>
+                  <span class="text-error">{{ form.password2.errors }}</span>
+
                   <div class="text-center">
-                    <button type="submit" name="update" class="btn bg-gradient-info w-100 mt-4 mb-0">Save</button>
+                    <button type="submit" name="register" class="btn bg-gradient-info w-100 mt-4 mb-0">Save</button>
                   </div>
+
                 </form>
               </div>
             </div>
@@ -122,9 +132,11 @@
 
 
     <div class="col-12 col-xl-5 col-md-5 d-flex flex-column mx-auto">
-      <div class="card mb-4">
-        <div class="card-header  pb-0 text-left bg-transparent">
-          <h4 class="text-info text-gradient">Users</h4>
+      <div class="card mb-4 ">
+        <div class="card-header pl-5  pb-0 text-left bg-transparent">
+          <p></p>
+          <h4 class="text-info text-gradient pl-5 ">Users</h4>
+          <p></p>
         </div>
         <div class="card-body p-3">
           <div class="accordion-1">

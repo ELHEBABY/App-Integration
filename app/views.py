@@ -203,10 +203,56 @@ def profile(request):
         return render(request, 'home/profile.html', context)
 
 
+def testlol(request):
+    msg = None
+    success = None
+    if request.method == "POST":
+        if request.POST.get('email'):
+            formUserAdd = User_register(request.POST)
+            if formUserAdd.is_valid():
+                formUserAdd.save()
+                success = 'The user was successfully added'
+                context = {"formUserAdd" : formUserAdd, "success" : success}
+                return render(request, "home/admin/lol.html", context)
+            else:
+                msg1 = 'Form is not valid'
+                context = {"formUserAdd" : formUserAdd, "success" : success, "msg1" : msg1}
+                return render(request, "home/admin/lol.html", context)
+        else:
+            context = {"formUserAdd" : formUserAdd, "msg" : msg, "success" : success}
+            return render(request, "home/admin/lol.html", context)
+    else:
+        formUserAdd = User_register()
+        context = {"formUserAdd" : formUserAdd, "msg" : msg, "success" : success}
+        return render(request, "home/admin/lol.html", context)
+
+
+def test5(request):
+    msg = None
+    success = False
+    if request.method == "POST":
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get("username")
+            raw_password = form.cleaned_data.get("password1")
+            user = authenticate(username=username, password=raw_password)
+            msg = 'User created - please <a href="/login">login</a>.'
+            success = True
+            return redirect("/profile")
+        else:
+            msg = 'Form is not valid'
+    else:
+        form = SignUpForm()
+    context = {"form": form, "msg": msg, "success": success}
+    return render(request, "accounts/register.html", context )
+
+
+
 @login_required(login_url = "/login/")
 @allowedUsers(allowedGroups = ['admin'])
 def settings(request):
-    users = users_pagination(request, 7)
+    users = users_pagination(request, 8)
     is_admin = is_admin_test(request)
     msg = None
     msg_settings = None
@@ -222,7 +268,7 @@ def settings(request):
             if formUserAdd.is_valid():
                 formUserAdd.save()
                 success = 'The user was successfully added'
-                users = users_pagination(request,7)
+                users = users_pagination(request,8)
                 context = {"formUserAdd" : formUserAdd, "success" : success, "segment" : segment, "users" : users, 'form_settings' : form_settings, "is_admin" : is_admin}
                 return render(request, "home/admin/settings.html", context)
             else:
