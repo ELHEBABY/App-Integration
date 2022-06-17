@@ -77,11 +77,15 @@ def logout_view(request):
 @login_required(login_url = "/login/")
 def index(request):
     is_admin = is_admin_test(request)
+    nbr_users = User.objects.all().count()
+
     nbr_intrg = Integrations.objects.all().count()
+
     nbr_intrg_success = Integrations.objects.filter(status='success').count()
     nbr_intrg_erreur = Integrations.objects.filter(status='erreur').count()
     nbr_intrg_automatic = Integrations.objects.filter(type='automatic').count()
     nbr_intrg_manual = Integrations.objects.filter(type='manual').count()
+
     jan_nbr_intg = Integrations.objects.filter(date_time__month='01').count()
     feb_nbr_intg = Integrations.objects.filter(date_time__month='02').count()
     mar_nbr_intg = Integrations.objects.filter(date_time__month='03').count()
@@ -121,6 +125,7 @@ def index(request):
     nov_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='11').filter(status='erreur').count()
     dec_nbr_intg_erreur = Integrations.objects.filter(date_time__month__gte='1', date_time__month__lte='12').filter(status='erreur').count()
 
+
     
     settings =IntegrationSettings.objects.get(id = 1)
     date = dateNextIntegration()
@@ -129,7 +134,7 @@ def index(request):
     
     'jan_nbr_intg_success': jan_nbr_intg_success, 'feb_nbr_intg_success': feb_nbr_intg_success, 'mar_nbr_intg_success': mar_nbr_intg_success, 'apr_nbr_intg_success': apr_nbr_intg_success, 'may_nbr_intg_success': may_nbr_intg_success, 'jun_nbr_intg_success': jun_nbr_intg_success, 'jul_nbr_intg_success': jul_nbr_intg_success, 'aug_nbr_intg_success': aug_nbr_intg_success, 'sep_nbr_intg_success': sep_nbr_intg_success, 'oct_nbr_intg_success': oct_nbr_intg_success, 'nov_nbr_intg_success': nov_nbr_intg_success, 'dec_nbr_intg_success': dec_nbr_intg_success,
     
-    'jan_nbr_intg_erreur': jan_nbr_intg_erreur, 'feb_nbr_intg_erreur': feb_nbr_intg_erreur, 'mar_nbr_intg_erreur': mar_nbr_intg_erreur, 'apr_nbr_intg_erreur': apr_nbr_intg_erreur, 'may_nbr_intg_erreur': may_nbr_intg_erreur, 'jun_nbr_intg_erreur': jun_nbr_intg_erreur, 'jul_nbr_intg_erreur': jul_nbr_intg_erreur, 'aug_nbr_intg_erreur': aug_nbr_intg_erreur, 'sep_nbr_intg_erreur': sep_nbr_intg_erreur, 'oct_nbr_intg_erreur': oct_nbr_intg_erreur, 'nov_nbr_intg_erreur': nov_nbr_intg_erreur, 'dec_nbr_intg_erreur': dec_nbr_intg_erreur}
+    'jan_nbr_intg_erreur': jan_nbr_intg_erreur, 'feb_nbr_intg_erreur': feb_nbr_intg_erreur, 'mar_nbr_intg_erreur': mar_nbr_intg_erreur, 'apr_nbr_intg_erreur': apr_nbr_intg_erreur, 'may_nbr_intg_erreur': may_nbr_intg_erreur, 'jun_nbr_intg_erreur': jun_nbr_intg_erreur, 'jul_nbr_intg_erreur': jul_nbr_intg_erreur, 'aug_nbr_intg_erreur': aug_nbr_intg_erreur, 'sep_nbr_intg_erreur': sep_nbr_intg_erreur, 'oct_nbr_intg_erreur': oct_nbr_intg_erreur, 'nov_nbr_intg_erreur': nov_nbr_intg_erreur, 'dec_nbr_intg_erreur': dec_nbr_intg_erreur, 'nbr_users': nbr_users}
     
     return render(request,"home/index.html", context)
 
@@ -201,52 +206,6 @@ def profile(request):
         formPasswordChange = PasswordChangeForm(request.user)
         context = {'formPasswordChange' : formPasswordChange, "msg": msg, "segment": segment, "success" : success, "formUserUpdate" : formUserUpdate, 'current_user' : current_user, "is_admin" : is_admin }
         return render(request, 'home/profile.html', context)
-
-
-def testlol(request):
-    msg = None
-    success = None
-    if request.method == "POST":
-        if request.POST.get('email'):
-            formUserAdd = User_register(request.POST)
-            if formUserAdd.is_valid():
-                formUserAdd.save()
-                success = 'The user was successfully added'
-                context = {"formUserAdd" : formUserAdd, "success" : success}
-                return render(request, "home/admin/lol.html", context)
-            else:
-                msg1 = 'Form is not valid'
-                context = {"formUserAdd" : formUserAdd, "success" : success, "msg1" : msg1}
-                return render(request, "home/admin/lol.html", context)
-        else:
-            context = {"formUserAdd" : formUserAdd, "msg" : msg, "success" : success}
-            return render(request, "home/admin/lol.html", context)
-    else:
-        formUserAdd = User_register()
-        context = {"formUserAdd" : formUserAdd, "msg" : msg, "success" : success}
-        return render(request, "home/admin/lol.html", context)
-
-
-def test5(request):
-    msg = None
-    success = False
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
-            user = authenticate(username=username, password=raw_password)
-            msg = 'User created - please <a href="/login">login</a>.'
-            success = True
-            return redirect("/profile")
-        else:
-            msg = 'Form is not valid'
-    else:
-        form = SignUpForm()
-    context = {"form": form, "msg": msg, "success": success}
-    return render(request, "accounts/register.html", context )
-
 
 
 @login_required(login_url = "/login/")
@@ -346,139 +305,3 @@ def handel403(request, exception):
 
 def handel500(request):
     return render(request, 'home/page-500.html', status=404)
-
-
-
-
-
-
-
-
-# function test
-def test(request):
-    integrationTask.delay("lol")
-    return HttpResponse("Done")
-
-def success(request):
-    template = render_to_string('home/email.html')
-    email=EmailMessage(
-        'subject',
-        template,
-        'pferendezvous@gmail.com',
-        ['elmehdi.elhebaby@gmail.com'],
-    )
-    email.fail_silently=False
-    email.send()
-    # project=Project.objects.get()
-    return redirect("/integration")
-
-
-
-def integration_schedule(datetime):
-    settings=IntegrationSettings.objects.get(id=1)
-    if(settings.frequenc == 'day'):
-        schedule, created = CrontabSchedule.objects.get_or_create(
-            minute=settings.time.minute,
-            hour=settings.time.hour,
-            day_of_week='*',
-            day_of_month='*',
-            month_of_year='*',
-        )
-    elif(settings.frequenc == 'two_days'):
-        schedule, created = CrontabSchedule.objects.get_or_create(
-            minute=settings.time.minute,
-            hour=settings.time.hour,
-            day_of_week='*',
-            day_of_month='*',
-            month_of_year='*',
-        )
-    elif(settings.frequenc == 'week'):
-        schedule, created = CrontabSchedule.objects.get_or_create(
-            minute=settings.time.minute,
-            hour=settings.time.hour,
-            day_of_week='*',
-            day_of_month='*',
-            month_of_year='*',
-        )
-    task = PeriodicTask.objects.create(
-            crontab = schedule,
-            name = "schedule_mail_task_"+ str(random.randint(0,99999)),
-            task = 'app.tasks.integrationTask'
-        )
-
-@login_required(login_url="/login/")
-def pages(request):
-    context = {}
-    # All resource paths end in .html.
-    # Pick out the html file name from the url. And load that template.
-    try:
-
-        load_template = request.path.split('/')[-1]
-        if load_template == 'admin':
-            return HttpResponseRedirect(reverse('admin:index'))
-        context['segment'] = load_template
-        html_template = loader.get_template('home/' + load_template +'.html')
-        return HttpResponse(html_template.render(context, request))
-    except template.TemplateDoesNotExist:
-        html_template = loader.get_template('home/page-404.html')
-        return HttpResponse(html_template.render(context, request))
-    except:
-        html_template = loader.get_template('home/page-500.html')
-        return HttpResponse(html_template.render(context, request))
-
-
-
-def test3(request):
-    periodic_task = PeriodicTask.objects.get(name='schedule_integration_task')
-    settings = IntegrationSettings.objects.get(id=1)
-    if(periodic_task.last_run_at != None):
-        date = periodic_task.last_run_at.date()
-    else:
-        date = periodic_task.date_changed.date()
-    present = datetime.now().date()
-    if(date < present):
-        date2 = present
-    else:
-        date2 = date
-    present_time = datetime.now().time()
-    time = settings.time
-
-    if(present_time < time):
-        k = 0
-    else:
-        k = 1
-    k=1
-    if(request.frequenc == 'day'):
-        if (k==1):
-            return date + timedelta(1)
-        else:
-            return date
-    elif(request.frequenc == 'two_days'):
-        return date.date() + timedelta(2)
-    elif(request.frequenc == 'week'):
-        return date.date() + timedelta(days=7)
-    # return HttpResponse(date2)
-
-@login_required(login_url="/login/")
-def register(request):
-    msg = None
-    success = False
-    if request.method == "POST":
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            raw_password = form.cleaned_data.get("password1")
-            user = authenticate(username=username, password=raw_password)
-            msg = 'User created - please <a href="/login">login</a>.'
-            success = True
-            return redirect("/profile")
-        else:
-            msg = 'Form is not valid'
-    else:
-        form = SignUpForm()
-    context = {"form": form, "msg": msg, "success": success}
-    return render(request, "accounts/register.html", context )
-# the end functions test
-
-

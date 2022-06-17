@@ -24,8 +24,10 @@ class IntegrationSettings(models.Model):
     update_date = models.DateTimeField("update date", auto_now_add=True)
     time = models.TimeField("time", default="00:00:00", null=True)
     email_reporting = models.EmailField(max_length=254)
-    email_conix_reporting = models.EmailField(max_length=254, default=None)
-    email_conix_reporting_psw = models.CharField(max_length=100, default=None)
+    smtp_server = models.CharField(max_length=100, default=None)
+    smtp_port = models.IntegerField( default=None)
+    smtp_user = models.EmailField(max_length=254, default=None)
+    smtp_password = models.CharField(max_length=100, default=None)
 
     def __init__(self, *args, **kwargs):
         super(IntegrationSettings, self).__init__(*args, **kwargs)

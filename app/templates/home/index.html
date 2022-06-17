@@ -24,7 +24,7 @@
                   From colors,cards, typography to complex elements, you will
                   find the full documentation.
                 </p> {% endcomment %}
-                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
+                <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="/integration">
                   Integration manual
                   <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
                 </a>
@@ -51,11 +51,16 @@
           <span class="mask bg-gradient-dark"></span>
           <div class="card-body position-relative z-index-1 d-flex flex-column h-100 p-3">
             <h5 class="text-white font-weight-bolder mb-4 pt-2">
-              Work with the rockets
+              Groupe ARKEOS 
             </h5>
             <p class="text-white">
-              Wealth creation is an evolutionarily recent positive-sum game. It
-              is all about who take the opportunity first.
+              Depuis 1950, le Groupe ARKEOS opère dans les domaines de l’impression et de la reprographie.
+              {% comment %} <br> {% endcomment %}
+            </p>
+
+            <p class="text-white">
+
+              Spécialiste en solutions d'impression bureautique, graphique, technique et éditique"
             </p>
             <a class="text-white text-sm font-weight-bold mb-0 icon-move-right mt-auto" href="javascript:;">
               {% comment %} Read More {% endcomment %}
@@ -72,15 +77,12 @@
       <div class="card shadow">
         <div class="card-body p-3">
           <div class="row">
-            <div class="col-7">
+            <div class="col-7 col-lg-7">
               <div class="numbers">
                 <p class="text-sm mb-0 text-capitalize font-weight-bold pb-4">
                   Integration
                 </p>
                 <h5 class="font-weight-bolder">{{ nbr_intrg }}</h5>
-                {% comment %}
-                <span class="text-success text-sm font-weight-bolder">+ $4,000</span>
-                <span class="text-sm">more</span> {% endcomment %}
               </div>
             </div>
             <div class="col-5 text-end my-auto">
@@ -127,9 +129,9 @@
                   Integration Manual
                 </p>
                 <h5 class="font-weight-bolder">{{ nbr_intrg_manual }}</h5>
-                {% comment %}
-                <span class="text-success text-sm font-weight-bolder">+ 5,3%</span>
-                {% endcomment %}
+                
+                {% comment %} <span class="text-success text-sm font-weight-bolder">+ 5,3%</span> {% endcomment %}
+               
               </div>
             </div>
             <div class="col-5 text-end my-auto">
@@ -198,16 +200,16 @@
         <div class="card-body p-3">
           <div class="bg-gradient-dark border-radius-lg py-3 pe-1 mb-3">
             <div class="chart">
-              <canvas id="chart-bars" class="chart-canvas" height="170px"></canvas>
+              <canvas id="chart-bars" class="chart-canvas" height="247px"></canvas>
             </div>
           </div>
-          <h6 class="ms-2 mt-4 mb-0">Active Users</h6>
+          {% comment %} <h6 class="ms-2 mt-4 mb-0">Active Users</h6>
           <p class="text-sm ms-2">
             (<span class="font-weight-bolder">+23%</span>) than last week
-          </p>
+          </p> {% endcomment %}
           <div class="container border-radius-lg">
             <div class="row">
-              <div class="col-3 py-3 ps-0">
+              <div class="col-6 col-lm-6 col-lg-6 py-3 ps-0">
                 <div class="d-flex mb-2">
                   <div
                     class="icon icon-shape icon-xxs shadow border-radius-sm bg-gradient-primary text-center me-2 d-flex align-items-center justify-content-center">
@@ -231,15 +233,15 @@
                       </g>
                     </svg>
                   </div>
-                  <p class="text-xs mt-1 mb-0 font-weight-bold">Users</p>
+                  <p class="text-xs mt-1 mb-0 font-weight-bold">Numbre Users</p>
                 </div>
-                <h4 class="font-weight-bolder">36K</h4>
-                <div class="progress w-75">
+                <h4 class="font-weight-bolder">{{ nbr_users }}</h4>
+                {% comment %} <div class="progress w-75">
                   <div class="progress-bar bg-dark w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0"
                     aria-valuemax="100"></div>
-                </div>
+                </div> {% endcomment %}
               </div>
-              <div class="col-3 py-3 ps-0">
+              <div class="col-6 col-lm-6 col-lg-6 py-3 ps-0">
                 <div class="d-flex mb-2">
                   <div
                     class="icon icon-shape icon-xxs shadow border-radius-sm bg-gradient-info text-center me-2 d-flex align-items-center justify-content-center">
@@ -269,15 +271,19 @@
                       </g>
                     </svg>
                   </div>
-                  <p class="text-xs mt-1 mb-0 font-weight-bold">Clicks</p>
+                  <p class="text-xs mt-1 mb-0 font-weight-bold">Type User</p>
                 </div>
-                <h4 class="font-weight-bolder">2m</h4>
-                <div class="progress w-75">
+                {% if is_admin %}
+                  <h4 class="font-weight-bolder">Admin</h4>
+                {% else %}
+                  <h4 class="font-weight-bolder">User</h4>
+                {% endif %}
+                {% comment %} <div class="progress w-75">
                   <div class="progress-bar bg-dark w-90" role="progressbar" aria-valuenow="90" aria-valuemin="0"
                     aria-valuemax="100"></div>
-                </div>
+                </div> {% endcomment %}
               </div>
-              <div class="col-3 py-3 ps-0">
+              {% comment %} <div class="col-3 py-3 ps-0">
                 <div class="d-flex mb-2">
                   <div
                     class="icon icon-shape icon-xxs shadow border-radius-sm bg-gradient-warning text-center me-2 d-flex align-items-center justify-content-center">
@@ -343,7 +349,7 @@
                   <div class="progress-bar bg-dark w-50" role="progressbar" aria-valuenow="50" aria-valuemin="0"
                     aria-valuemax="100"></div>
                 </div>
-              </div>
+              </div> {% endcomment %}
             </div>
           </div>
         </div>

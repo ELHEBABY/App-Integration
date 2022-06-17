@@ -290,16 +290,31 @@
             </div>
             <div class="col-4 col-xl-5 pe-6">
               <div class="card-body">
-                <label>Email conix reporting</label>
+                
+                <label>SMTP Server :</label>
                 <div class="mb-3">
-                  {{ form_settings.email_conix_reporting }}
+                  {{ form_settings.smtp_server }}
                 </div>
-                <span class="text-error">{{ form_settings.email_conix_reporting.errors }}</span>
-                <label>Email conix reporting psw:</label>
+                <span class="text-error">{{ form_settings.smtp_server.errors }}</span>
+
+                <label>SMTP Port :</label>
                 <div class="mb-3">
-                  {{ form_settings.email_conix_reporting_psw }}
+                  {{ form_settings.smtp_port }}
                 </div>
-                <span class="text-error">{{ form_settings.email_conix_reporting_psw.errors }}</span>
+                <span class="text-error">{{ form_settings.smtp_port.errors }}</span>
+
+                <label>SMTP User :</label>
+                <div class="mb-3">
+                  {{ form_settings.smtp_user }}
+                </div>
+                <span class="text-error">{{ form_settings.smtp_user.errors }}</span>
+
+                <label>SMTP Password:</label>
+                <div class="mb-3">
+                  {{ form_settings.smtp_password }}
+                </div>
+                <span class="text-error">{{ form_settings.smtp_password.errors }}</span>
+
               </div>
             </div>
           </div>

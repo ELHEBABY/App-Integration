@@ -197,23 +197,38 @@ class IntegrationSettingsForm(forms.ModelForm):
         )
 
 
-    email_conix_reporting = forms.EmailField(
+    smtp_user = forms.EmailField(
         initial='',
         widget=forms.EmailInput(
             attrs={'class': 'form-control'}),
         required=True
         )
     
-    email_conix_reporting_psw = forms.CharField(
+    smtp_password = forms.CharField(
+        initial='',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
+        required=True
+        )
+    
+    smtp_server = forms.CharField(
         initial='',
         widget=forms.TextInput(
             attrs={'class': 'form-control'}),
         required=True
         )
 
+    smtp_port = forms.CharField(
+        initial='',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}),
+        required=True
+        )
+
+        
     class Meta:
         model = IntegrationSettings
-        fields = ('type', 'frequenc', 'time', 'email_reporting', 'email_conix_reporting', 'email_conix_reporting_psw')
+        fields = ('type', 'frequenc', 'time', 'email_reporting', 'smtp_user', 'smtp_password', 'smtp_server', 'smtp_port')
 
 
 

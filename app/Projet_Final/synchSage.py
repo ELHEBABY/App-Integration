@@ -116,7 +116,7 @@ def synchSage(head, conn):
                 Log.write("Succès : Facture : " + str(Nfacture)+" : " +str(datetime.datetime.now())+"\n")
         conn.close()
         Log.close()
-        exit()
+        # exit()
     except Exception as err:
         Log = open('data.txt','a')
         #print(sqlInvoice2Integer)
@@ -125,7 +125,7 @@ def synchSage(head, conn):
         Log.write("Err : Erreur Sys : " + str(err)+" : " +str(datetime.datetime.now())+"\n")
         conn.close()
         Log.close()
-        exit()
+        # exit()
 
         
 
