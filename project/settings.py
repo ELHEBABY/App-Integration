@@ -14,6 +14,11 @@ from email.mime import application
 import json
 from pathlib import Path
 from re import template
+import os
+import django_heroku
+import dj_database_url
+from decouple import config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,9 +29,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure--=-4nj9%hg2+sm-85o_gdkl*lv#55y2%d2i4^$m5*$=ys#l@#_'
+# SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -53,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.whiteNoismiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -147,9 +154,9 @@ CELERY_TASK_SERIALIZER = 'json'
 
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
-# CELERY_BEAT_SCHEDULE = {
-#     "SendScheduleEmails" : {
-#         'task' : 'scraper.tasks.send_scheduel_emails',
-#         'schedule' : crontab(minute="+/30")
-#     }
-# }
+
+
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFileStorage'
+
+django_heroku.settings(locals())
