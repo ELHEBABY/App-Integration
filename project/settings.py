@@ -15,9 +15,9 @@ import json
 from pathlib import Path
 from re import template
 import os
-import django_heroku
-import dj_database_url
-from decouple import config
+# import django_heroku
+# import dj-database-url
+# from decouple import config
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,9 +32,9 @@ SECRET_KEY = 'django-insecure--=-4nj9%hg2+sm-85o_gdkl*lv#55y2%d2i4^$m5*$=ys#l@#_
 # SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['arkeosapp.herokuapp.com','127.0.0.1']
 
 
 # Application definition
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.whiteNoismiddleware',
+    # 'whitenoise.middleware.whiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -128,7 +128,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
+STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
+
+
 STATIC_URL = 'static/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -152,11 +161,11 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CERELY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 
 
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFileStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFileStorage'
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
