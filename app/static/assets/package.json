@@ -8,10 +8,12 @@
     },
     "scripts": {
         "open-app": "gulp open-app",
-        "start": "npm run open-app",
+        "start": "node index.js",
         "test": "echo \"Error: no test specified\" && exit 1",
         "watch": "gulp-watch"
     },
+
+
     "keywords": [
         "soft ui dashboard pro",
         "bootstrap 5",
